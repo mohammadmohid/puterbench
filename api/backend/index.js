@@ -37,4 +37,4 @@ app.get("/", (req, res) => {
 });
 
 // Export as a serverless function
-module.exports = app;
+export default app;
