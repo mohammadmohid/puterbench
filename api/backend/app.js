@@ -18,7 +18,7 @@ app.use(cookieParser());
 
 app.use(
   cors({
-    origin: ["http://puterbench.vercel.app"],
+    origin: ["https://puterbench.vercel.app"],
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Accept", "Content-Type", "Authorization"],

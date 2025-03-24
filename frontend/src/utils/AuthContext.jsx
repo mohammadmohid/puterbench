@@ -18,7 +18,7 @@ export const AuthProvider = ({ children }) => {
   const checkAuth = async () => {
     try {
       const response = await fetch(
-        "http://puterbench.vercel.app/api/user/refresh",
+        "https://puterbench.vercel.app/api/user/refresh",
         {
           method: "GET",
           credentials: "include",
@@ -47,7 +47,7 @@ export const AuthProvider = ({ children }) => {
   const login = async (email, password) => {
     try {
       const response = await fetch(
-        "http://puterbench.vercel.app/api/user/signin",
+        "https://puterbench.vercel.app/api/user/signin",
         {
           method: "POST",
           headers: {
@@ -75,7 +75,7 @@ export const AuthProvider = ({ children }) => {
   const register = async (name, email, password) => {
     try {
       const response = await fetch(
-        "http://puterbench.vercel.app/api/user/signup",
+        "https://puterbench.vercel.app/api/user/signup",
         {
           method: "POST",
           headers: {
@@ -103,7 +103,7 @@ export const AuthProvider = ({ children }) => {
   const logout = async () => {
     try {
       const response = await fetch(
-        "http://puterbench.vercel.app/api/user/logout",
+        "https://puterbench.vercel.app/api/user/logout",
         {
           method: "POST",
           credentials: "include",
