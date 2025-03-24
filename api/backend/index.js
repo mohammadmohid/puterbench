@@ -1,40 +1,36 @@
-const express = require("express");
-const cors = require("cors");
-const dotenv = require("dotenv").config();
-const cookieParser = require("cookie-parser");
+import express from "express";
+import cors from "cors";
+import dotenv from "dotenv";
+import cookieParser from "cookie-parser";
+import { connectToMongoDB } from "./config/mongodb.js";
 
-// MongoDB Connection
-const { connectToMongoDB } = require("./config/mongodb.js");
+// Import routes
+import userRoutes from "./routes/userRoutes.js";
+import categoryRoutes from "./routes/categoryRoutes.js";
+import productRoutes from "./routes/productRoutes.js";
 
-// Import Routes
-const userRoutes = require("./routes/userRoutes.js");
-const categoryRoutes = require("./routes/categoryRoutes.js");
-const productRoutes = require("./routes/productRoutes.js");
-
+dotenv.config();
 const app = express();
 connectToMongoDB();
-
-app.use(cookieParser());
 
 app.use(
   cors({
     origin: ["https://puterbench.vercel.app"],
     credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Accept", "Content-Type", "Authorization"],
   })
 );
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
+// API routes
 app.use("/api/user", userRoutes);
 app.use("/api/categories", categoryRoutes);
 app.use("/api/products", productRoutes);
 
 app.get("/", (req, res) => {
-  res.send("Yes, the server is running!");
+  res.send("Server is running!");
 });
 
-// Export as a serverless function
 export default app;
