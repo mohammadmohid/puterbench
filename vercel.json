@@ -2,11 +2,11 @@
   "version": 2,
   "builds": [
     {
-      "src": "frontend/next.config.mjs",
+      "src": "/frontend/next.config.mjs",
       "use": "@vercel/next"
     },
     {
-      "src": "api/backend/index.js",
+      "src": "/api/backend/index.js",
       "use": "@vercel/node"
     }
   ],
