@@ -1,0 +1,4 @@
+{
+  "eslint.workingDirectories": ["./frontend", "./backend"],
+  "git.ignoreLimitWarning": true
+}
