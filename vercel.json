@@ -2,6 +2,10 @@
   "version": 2,
   "builds": [
     {
+      "src": "frontend/next.config.js",
+      "use": "@vercel/next"
+    },
+    {
       "src": "api/backend/index.js",
       "use": "@vercel/node"
     }
@@ -15,5 +19,6 @@
       "src": "/(.*)",
       "dest": "/frontend/$1"
     }
-  ]
+  ],
+  "ignoreCommand": "echo 'Ignoring files not needed for deployment'"
 }
