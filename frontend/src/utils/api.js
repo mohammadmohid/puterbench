@@ -1,4 +1,4 @@
-export const API_LINK = "http://localhost:5000/api";
+export const API_LINK = "http://puterbench.vercel.app/api";
 
 // Product API functions
 export const fetchProducts = async () => {
@@ -9,7 +9,7 @@ export const fetchProducts = async () => {
 
 export const fetchProductById = async (id) => {
   const response = await fetch(
-    `http://localhost:5000/api/products/getProduct/${id}`
+    `http://puterbench.vercel.app/api/products/getProduct/${id}`
   );
   if (!response.ok) throw new Error("Failed to fetch product");
   return response.json();
@@ -26,7 +26,7 @@ export const createProduct = async (formData) => {
 
 export const updateProduct = async (id, formData) => {
   const response = await fetch(
-    `http://localhost:5000/api/products/updateProduct/${id}`,
+    `http://puterbench.vercel.app/api/products/updateProduct/${id}`,
     {
       method: "PUT",
       body: formData,
@@ -38,7 +38,7 @@ export const updateProduct = async (id, formData) => {
 
 export const deleteProduct = async (id) => {
   const response = await fetch(
-    `http://localhost:5000/api/products/deleteProduct/${id}`,
+    `http://puterbench.vercel.app/api/products/deleteProduct/${id}`,
     {
       method: "DELETE",
     }
@@ -49,7 +49,7 @@ export const deleteProduct = async (id) => {
 
 export const deleteProductImage = async (productId, imageIndex) => {
   const response = await fetch(
-    `http://localhost:5000/api/products/${productId}/images/${imageIndex}`,
+    `http://puterbench.vercel.app/api/products/${productId}/images/${imageIndex}`,
     {
       method: "DELETE",
     }
@@ -76,7 +76,7 @@ export const createCategory = async (formData) => {
 
 export const deleteCategory = async (id) => {
   const response = await fetch(
-    `http://localhost:5000/api/categories/deleteCategory/${id}`,
+    `http://puterbench.vercel.app/api/categories/deleteCategory/${id}`,
     {
       method: "POST",
     }

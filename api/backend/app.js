@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const dotenv = require("dotenv").config();
 const cookieParser = require("cookie-parser");
+const { createServerlessHandler } = require("@vercel/node");
 
 const { connectToMongoDB } = require("./config/mongodb.js");
 const userRoutes = require("./routes/userRoutes.js");
@@ -17,7 +18,7 @@ app.use(cookieParser());
 
 app.use(
   cors({
-    origin: ["http://localhost:3000"],
+    origin: ["http://puterbench.vercel.app"],
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Accept", "Content-Type", "Authorization"],
@@ -37,3 +38,6 @@ app.get("/", (res) => {
 app.listen(port, () => {
   console.log(`Server listening on port ${port}`);
 });
+
+// Export as a serverless function
+module.exports = createServerlessHandler(app);
