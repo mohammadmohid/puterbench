@@ -2,10 +2,6 @@
   "version": 2,
   "builds": [
     {
-      "src": "/frontend/next.config.mjs",
-      "use": "@vercel/next"
-    },
-    {
       "src": "/api/backend/index.js",
       "use": "@vercel/node"
     }
@@ -14,10 +10,6 @@
     {
       "src": "/api/(.*)",
       "dest": "/api/backend/index.js"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/frontend/$1"
     }
   ]
 }
