@@ -2,14 +2,14 @@ const express = require("express");
 const cors = require("cors");
 const dotenv = require("dotenv").config();
 const cookieParser = require("cookie-parser");
-const { createServerlessHandler } = require("@vercel/node");
 
+// MongoDB Connection
 const { connectToMongoDB } = require("./config/mongodb.js");
+
+// Import Routes
 const userRoutes = require("./routes/userRoutes.js");
 const categoryRoutes = require("./routes/categoryRoutes.js");
 const productRoutes = require("./routes/productRoutes.js");
-
-const port = process.env.PORT || 5000;
 
 const app = express();
 connectToMongoDB();
@@ -24,6 +24,7 @@ app.use(
     allowedHeaders: ["Accept", "Content-Type", "Authorization"],
   })
 );
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -31,13 +32,9 @@ app.use("/api/user", userRoutes);
 app.use("/api/categories", categoryRoutes);
 app.use("/api/products", productRoutes);
 
-app.get("/", (res) => {
+app.get("/", (req, res) => {
   res.send("Yes, the server is running!");
 });
 
-app.listen(port, () => {
-  console.log(`Server listening on port ${port}`);
-});
-
 // Export as a serverless function
-module.exports = createServerlessHandler(app);
+module.exports = app;
