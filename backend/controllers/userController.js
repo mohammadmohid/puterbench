@@ -73,6 +73,7 @@ const signin = async (req, res) => {
       httpOnly: true,
       sameSite: "None",
       secure: true,
+      partitioned: true,
       maxAge: 24 * 60 * 60 * 1000,
       path: "/",
     });
@@ -134,6 +135,7 @@ const logout = async (req, res) => {
       httpOnly: true,
       secure: true,
       sameSite: "None",
+      partitioned: true,
       expires: new Date(0), // This will immediately expire the cookie
       path: "/",
     });
