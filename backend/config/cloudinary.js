@@ -1,6 +1,6 @@
-const cloudinary = require("cloudinary").v2;
-const { CloudinaryStorage } = require("multer-storage-cloudinary");
-const multer = require("multer");
+import cloudinary from ("cloudinary").v2;
+import { CloudinaryStorage } from "multer-storage-cloudinary";
+import multer from "multer";
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -30,4 +30,4 @@ const deleteImage = async (publicId) => {
   }
 };
 
-module.exports = { upload, deleteImage, cloudinary };
+export { upload, deleteImage, cloudinary };
