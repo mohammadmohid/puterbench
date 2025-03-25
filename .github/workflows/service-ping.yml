@@ -1,0 +1,24 @@
+name: Periodic Service Ping
+
+on:
+  schedule:
+    # Runs every 14 minutes
+    - cron: "*/14 * * * *"
+
+jobs:
+  ping-service:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Ping Service
+        run: |
+          response=$(curl -s -o /dev/null -w "%{http_code}" https://puterbench-backend.onrender.com)
+          if [ $response -eq 200 ]; then
+            echo "Service pinged successfully with 200 OK"
+          else
+            echo "Service ping failed with response code: $response"
+            exit 1
+          fi
