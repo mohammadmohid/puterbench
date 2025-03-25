@@ -1,5 +1,6 @@
-const Product = require("../models/product");
-const Category = require("../models/category");
+import Product from "../models/product.js";
+import Category from "../models/category.js";
+import { deleteImage } from "../config/cloudinary";
 
 // Create a new product
 const createProduct = async (req, res) => {
@@ -180,7 +181,7 @@ const deleteProduct = async (req, res) => {
   }
 };
 
-module.exports = {
+export {
   createProduct,
   getProducts,
   getProductById,

@@ -1,4 +1,4 @@
-const Category = require("../models/category");
+import Category from "../models/category.js";
 
 // Fetch all categories
 const getCategories = async (req, res) => {
@@ -22,13 +22,11 @@ const createCategory = async (req, res) => {
     if (req.file && req.file.path) {
       mainImage = req.file.path;
     }
-
     const category = new Category({
       name: req.body.name,
       image: mainImage,
       color: req.body.color,
     });
-
     const savedCategory = await category.save();
     if (!savedCategory) {
       return res.status(404).send("The Category cannot be created");
@@ -55,8 +53,4 @@ const deleteCategory = async (req, res) => {
   }
 };
 
-module.exports = {
-  getCategories,
-  createCategory,
-  deleteCategory,
-};
+export { getCategories, createCategory, deleteCategory };

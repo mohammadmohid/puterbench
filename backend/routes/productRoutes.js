@@ -1,13 +1,14 @@
-const express = require("express");
-const {
+import express from "express";
+import {
   createProduct,
   getProducts,
   getProductById,
   updateProduct,
   deleteProductImage,
   deleteProduct,
-} = require("../controllers/productController");
-const { upload } = require("../config/cloudinary");
+} from "../controllers/productController.js";
+import { upload } from "../config/cloudinary.js";
+
 const router = express.Router();
 
 const uploadFields = upload.fields([
@@ -30,7 +31,7 @@ router.put("/updateProduct/:id", uploadFields, updateProduct);
 // Route to delete a product by ID
 router.delete("/deleteProduct/:id", deleteProduct);
 
-// // Route to delete a product image by ID
+// Route to delete a product image by ID
 router.delete("/:id/images/:imageIndex", deleteProductImage);
 
-module.exports = router;
+export default router;

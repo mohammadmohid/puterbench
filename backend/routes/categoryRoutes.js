@@ -1,10 +1,11 @@
-const express = require("express");
-const {
+import express from "express";
+import {
   getCategories,
   createCategory,
   deleteCategory,
-} = require("../controllers/categoryController.js");
-const { upload } = require("../config/cloudinary");
+} from "../controllers/categoryController.js";
+import { upload } from "../config/cloudinary.js";
+
 const router = express.Router();
 
 // Route to fetch all categories
@@ -16,4 +17,4 @@ router.post("/createCategory", upload.single("image"), createCategory);
 // Route to delete a category by id.
 router.post("/deleteCategory/:id", deleteCategory);
 
-module.exports = router;
+export default router;
