@@ -16,7 +16,7 @@ connectToMongoDB();
 
 app.use(
   cors({
-    origin: ["https://puterbench.vercel.app"],
+    origin: ["http://3.92.216.80/"],
     credentials: true,
   })
 );
