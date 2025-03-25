@@ -1,4 +1,4 @@
-export const API_LINK = "https://puterbench-backend.onrender.com";
+export const API_LINK = "http://3.92.216.80/api";
 
 // Product API functions
 export const fetchProducts = async () => {
