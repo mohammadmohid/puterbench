@@ -87,9 +87,9 @@ const signin = async (req, res) => {
 const refresh = async (req, res) => {
   try {
     const refreshToken = req.cookies?.jwt;
-
-    if (!refreshToken)
+    if (!refreshToken) {
       return res.status(401).json({ message: "Unauthorized. No token found." });
+    }
 
     jwt.verify(
       refreshToken,
@@ -100,7 +100,7 @@ const refresh = async (req, res) => {
           return res.status(403).json({ message: "Forbidden. Invalid token." });
         }
 
-        // We send a new access token
+        // Generate new access token
         const accessToken = jwt.sign(
           { userId: decoded.userId },
           process.env.ACCESS_TOKEN_SECRET,
@@ -108,6 +108,16 @@ const refresh = async (req, res) => {
             expiresIn: "15m",
           }
         );
+
+        // Set Partitioned and Secure cookies
+        res.cookie("jwt", refreshToken, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === "production",
+          sameSite: "strict",
+          partitioned: true, // Add Partitioned attribute
+          maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+        });
+
         return res.json({ accessToken });
       }
     );
