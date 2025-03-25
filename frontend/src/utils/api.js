@@ -1,4 +1,4 @@
-export const API_LINK = "https://puterbench.vercel.app/api";
+export const API_LINK = process.env.BACKEND_URL;
 
 // Product API functions
 export const fetchProducts = async () => {
@@ -8,9 +8,7 @@ export const fetchProducts = async () => {
 };
 
 export const fetchProductById = async (id) => {
-  const response = await fetch(
-    `https://puterbench.vercel.app/api/products/getProduct/${id}`
-  );
+  const response = await fetch(`${API_LINK}/products/getProduct/${id}`);
   if (!response.ok) throw new Error("Failed to fetch product");
   return response.json();
 };
@@ -25,31 +23,25 @@ export const createProduct = async (formData) => {
 };
 
 export const updateProduct = async (id, formData) => {
-  const response = await fetch(
-    `https://puterbench.vercel.app/api/products/updateProduct/${id}`,
-    {
-      method: "PUT",
-      body: formData,
-    }
-  );
+  const response = await fetch(`${API_LINK}/products/updateProduct/${id}`, {
+    method: "PUT",
+    body: formData,
+  });
   if (!response.ok) throw new Error("Failed to update product");
   return response.json();
 };
 
 export const deleteProduct = async (id) => {
-  const response = await fetch(
-    `https://puterbench.vercel.app/api/products/deleteProduct/${id}`,
-    {
-      method: "DELETE",
-    }
-  );
+  const response = await fetch(`${API_LINK}/products/deleteProduct/${id}`, {
+    method: "DELETE",
+  });
   if (!response.ok) throw new Error("Failed to delete product");
   return response.json();
 };
 
 export const deleteProductImage = async (productId, imageIndex) => {
   const response = await fetch(
-    `https://puterbench.vercel.app/api/products/${productId}/images/${imageIndex}`,
+    `${API_LINK}/products/${productId}/images/${imageIndex}`,
     {
       method: "DELETE",
     }
@@ -75,12 +67,9 @@ export const createCategory = async (formData) => {
 };
 
 export const deleteCategory = async (id) => {
-  const response = await fetch(
-    `https://puterbench.vercel.app/api/categories/deleteCategory/${id}`,
-    {
-      method: "POST",
-    }
-  );
+  const response = await fetch(`${API_LINK}/categories/deleteCategory/${id}`, {
+    method: "POST",
+  });
   if (!response.ok) throw new Error("Failed to delete category");
   return response.json();
 };
