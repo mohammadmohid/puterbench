@@ -1,6 +1,6 @@
 import Product from "../models/product.js";
 import Category from "../models/category.js";
-import { deleteImage } from "../config/cloudinary";
+import { deleteImage } from "../config/cloudinary.js";
 
 // Create a new product
 const createProduct = async (req, res) => {
