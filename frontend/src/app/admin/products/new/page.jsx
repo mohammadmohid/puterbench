@@ -31,7 +31,7 @@ export default function NewProductPage() {
   const handleSubmit = async (formData) => {
     try {
       await createProduct(formData, user.accessToken);
-      router.push("/products");
+      router.push("/admin/products");
     } catch (error) {
       console.error("Error creating product:", error);
     }

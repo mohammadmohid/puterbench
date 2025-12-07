@@ -43,15 +43,17 @@ export default function AdminsPage() {
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold">Admin Dashboard</h1>
           <div className="flex gap-4">
-            <Link href="/admin/products/new">
-              <button className="px-3 py-2 rounded-lg flex gap-2 items-center transition-colors bg-brand text-brand-white hover:bg-secondary">
-                Add New Product
-              </button>
+            <Link
+              className="px-3 py-2 rounded-lg flex gap-2 items-center transition-colors bg-brand text-brand-white hover:bg-secondary"
+              href="/admin/products/new"
+            >
+              Add New Product
             </Link>
-            <Link href="/admin/categories/new">
-              <button className="px-3 py-2 rounded-lg flex gap-2 items-center transition-colors bg-brand text-brand-white hover:bg-secondary">
-                Add New Category
-              </button>
+            <Link
+              className="px-3 py-2 rounded-lg flex gap-2 items-center transition-colors bg-brand text-brand-white hover:bg-secondary"
+              href="/admin/categories/new"
+            >
+              Add New Category
             </Link>
           </div>
         </div>

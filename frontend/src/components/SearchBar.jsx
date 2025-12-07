@@ -10,7 +10,7 @@ const SearchBar = (props) => {
     const name = formData.get("name");
 
     if (name) {
-      router.push(`/list?search=${name}`);
+      router.push(`/products?search=${name}`);
     }
   };
 

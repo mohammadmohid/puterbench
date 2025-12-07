@@ -2,20 +2,24 @@
 
 import { ProductCard } from "@/components/ProductCard";
 import { fetchProducts } from "@/utils/api";
-import { useRouter } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useState, useEffect, useMemo } from "react";
 
 export default function ProductListing() {
   const router = useRouter();
-
-  const [filters, setFilters] = useState({
-    brandName: "",
-    priceRange: [0, 100000],
-    otherFilters: [],
-  });
+  const searchParams = useSearchParams();
+  const searchQuery = searchParams.get("search") || "";
+  const categoryQuery = searchParams.get("category") || "";
 
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  // Filter States
+  const [filters, setFilters] = useState({
+    brandName: "",
+    priceRange: [0, 1000000], // Increased max for better range
+  });
+  const [selectedFilters, setSelectedFilters] = useState([]);
 
   useEffect(() => {
     loadProducts();
@@ -32,12 +36,12 @@ export default function ProductListing() {
     }
   };
 
-  const [selectedFilters, setSelectedFilters] = useState([]);
-
   const handleBrandNameChange = (e) => {
     const brand = e.target.value;
     if (brand && !selectedFilters.includes("Brand Name")) {
       setSelectedFilters([...selectedFilters, "Brand Name"]);
+    } else if (!brand) {
+      setSelectedFilters(selectedFilters.filter((f) => f !== "Brand Name"));
     }
     setFilters({ ...filters, brandName: brand });
   };
@@ -47,29 +51,61 @@ export default function ProductListing() {
     if (filter === "Brand Name") {
       setFilters({ ...filters, brandName: "" });
     } else if (filter === "Price") {
-      setFilters({ ...filters, priceRange: [0, 10000000] });
-    } else {
-      setFilters({
-        ...filters,
-        otherFilters: filters.otherFilters.filter((f) => f !== filter),
-      });
+      setFilters({ ...filters, priceRange: [0, 1000000] });
     }
   };
 
+  // Filter Logic
+  const filteredProducts = useMemo(() => {
+    return products.filter((product) => {
+      // 1. Search Filter
+      if (
+        searchQuery &&
+        !product.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
+        !product.description?.toLowerCase().includes(searchQuery.toLowerCase())
+      ) {
+        return false;
+      }
+
+      // 2. Category Filter (from URL)
+      if (categoryQuery && product.category !== categoryQuery) {
+        return false;
+      }
+
+      // 3. Brand Filter
+      if (
+        filters.brandName &&
+        !product.brand?.toLowerCase().includes(filters.brandName.toLowerCase())
+      ) {
+        return false;
+      }
+
+      // 4. Price Filter
+      if (product.price > filters.priceRange[1]) {
+        return false;
+      }
+
+      return true;
+    });
+  }, [products, searchQuery, categoryQuery, filters]);
+
   return (
-    <div className="flex gap-8 p-8">
+    <div className="flex flex-col md:flex-row gap-8 p-4 md:p-8">
       {/* Filters sidebar */}
-      <div className="flex-shrink-0 border border-border-default p-4 rounded-lg">
+      <div className="w-full md:w-64 flex-shrink-0 border border-border-default p-4 rounded-lg h-fit">
         <div className="mb-6">
           <h3 className="font-semibold mb-4">Selected Filters</h3>
           <div className="flex flex-wrap gap-2">
+            {selectedFilters.length === 0 && (
+              <span className="text-gray-500 text-sm">No filters selected</span>
+            )}
             {selectedFilters.map((filter) => (
               <button
                 key={filter}
                 onClick={() => removeFilter(filter)}
-                className="flex items-center gap-1 px-2 py-1 bg-gray-100 rounded-full text-sm"
+                className="flex items-center gap-1 px-2 py-1 bg-gray-100 rounded-full text-sm hover:bg-gray-200"
               >
-                {filter}{" "}
+                {filter}
                 <svg
                   width="14"
                   height="14"
@@ -98,18 +134,18 @@ export default function ProductListing() {
               placeholder="Enter brand name"
               value={filters.brandName}
               onChange={handleBrandNameChange}
-              className="w-full p-2 border rounded-lg"
+              className="w-full p-2 border rounded-lg focus:outline-brand"
             />
           </div>
 
           <div>
             <h3 className="font-semibold mb-2">Price Range</h3>
-            <div className="flex items-center">
-              <span>Rs. 0</span>
+            <div className="flex flex-col gap-2">
               <input
                 type="range"
                 min="0"
-                max="100000"
+                max="1000000"
+                step="1000"
                 value={filters.priceRange[1]}
                 onChange={(e) => {
                   if (!selectedFilters.includes("Price")) {
@@ -120,9 +156,12 @@ export default function ProductListing() {
                     priceRange: [0, parseInt(e.target.value)],
                   });
                 }}
-                className="accent-brand bg-brand flex-grow"
+                className="accent-brand bg-brand w-full cursor-pointer"
               />
-              <span>Rs. {filters.priceRange[1].toLocaleString()}</span>
+              <div className="flex justify-between text-sm">
+                <span>Rs. 0</span>
+                <span>Rs. {filters.priceRange[1].toLocaleString()}</span>
+              </div>
             </div>
           </div>
         </div>
@@ -130,36 +169,26 @@ export default function ProductListing() {
 
       {/* Products grid */}
       <div className="flex-grow">
-        <div className="flex justify-between items-center mb-6">
-          <div className="flex gap-2">
-            <select className="p-2 bg-brand text-brand-white rounded-lg">
-              <option value="20">20</option>
-              <option value="40">40</option>
-              <option value="60">60</option>
+        <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
+          <div className="flex gap-2 items-center">
+            <span className="text-gray-600">Sort By:</span>
+            <select className="p-2 border rounded-lg focus:outline-brand bg-white">
+              <option value="latest">Latest</option>
+              <option value="price-asc">Price: Low to High</option>
+              <option value="price-desc">Price: High to Low</option>
             </select>
-          </div>
-
-          <div className="flex gap-4">
-            <button className="px-4 py-2 bg-brand hover:bg-secondary text-brand-white rounded-lg">
-              Latest
-            </button>
-            <button className="px-4 bg-[#F5F5F5] hover:bg-[#E8E8E8] py-2 rounded-lg">
-              Price ascending
-            </button>
-            <button className="px-4 bg-[#F5F5F5] hover:bg-[#E8E8E8] py-2 rounded-lg">
-              Price descending
-            </button>
-            <button className="px-4 bg-[#F5F5F5] hover:bg-[#E8E8E8] py-2 rounded-lg">
-              Rating
-            </button>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {loading ? (
-            <div>Loading...</div>
-          ) : (
-            products.map((product) => (
+        {loading ? (
+          <div>Loading...</div>
+        ) : filteredProducts.length === 0 ? (
+          <div className="text-center py-10 text-gray-500">
+            No products found matching your criteria.
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {filteredProducts.map((product) => (
               <ProductCard
                 key={product._id}
                 name={product.name}
@@ -168,34 +197,9 @@ export default function ProductListing() {
                 imageSrc={product.image}
                 onClick={() => router.push(`products/${product._id}`)}
               />
-            ))
-          )}
-        </div>
-
-        <div className="flex justify-between items-center mt-8">
-          <div className="flex gap-2 items-center">
-            <button className="px-4 py-2 hover:bg-[#F5F5F5] rounded-lg">
-              Previous
-            </button>
-            {[1, 2, 3, "...", 9, 10].map((page, i) => (
-              <button
-                key={i}
-                className={`w-10 h-10 flex items-center justify-center rounded-lg ${
-                  page === 1 ? "bg-[#F5F5F5]" : "hover:bg-[#F5F5F5]"
-                }`}
-              >
-                {page}
-              </button>
             ))}
-            <button className="px-4 py-2 hover:bg-[#F5F5F5] rounded-lg">
-              Next
-            </button>
           </div>
-
-          <div className="text-sm text-text-secondary">
-            Showing 1-12 rows of 150 Results.
-          </div>
-        </div>
+        )}
       </div>
     </div>
   );

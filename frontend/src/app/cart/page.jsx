@@ -164,9 +164,12 @@ const Cart = () => {
               <span>Rs. {total}</span>
             </div>
           </div>
-          <button className="w-full mt-6 px-6 py-3 bg-brand hover:bg-secondary text-brand-white font-semibold rounded-lg flex items-center justify-center gap-2">
+          <Link
+            href="/checkout"
+            className="w-full mt-6 px-6 py-3 bg-brand hover:bg-secondary text-brand-white font-semibold rounded-lg flex items-center justify-center gap-2"
+          >
             <span>Checkout</span>
-          </button>
+          </Link>
         </div>
       </div>
     </div>

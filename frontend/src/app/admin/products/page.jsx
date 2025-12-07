@@ -45,10 +45,11 @@ export default function ProductsPage() {
       <div className="container mx-auto p-4">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold">Products</h1>
-          <Link href="products/new">
-            <button className="px-3 py-2 rounded-lg flex gap-2 items-center transition-colors bg-brand text-brand-white hover:bg-secondary">
-              Add New Product
-            </button>
+          <Link
+            className="px-3 py-2 rounded-lg flex gap-2 items-center transition-colors bg-brand text-brand-white hover:bg-secondary"
+            href="products/new"
+          >
+            Add New Product
           </Link>
         </div>
 
@@ -60,6 +61,7 @@ export default function ProductsPage() {
                   <Image
                     src={product.image}
                     alt={product.name}
+                    className="object-contain"
                     fill
                     sizes="25vw"
                   />
@@ -67,13 +69,17 @@ export default function ProductsPage() {
               </div>
               <h2 className="text-xl font-semibold">{product.name}</h2>
               <p className="text-gray-600">Rs. {product.price}</p>
-              <div className="mt-4 flex space-x-2">
-                <Link href={`products/${product._id}`}>
-                  <button className="px-3 py-2 rounded-lg flex gap-2 items-center transition-colors bg-brand text-brand-white hover:bg-secondary">
-                    Edit
-                  </button>
+              <div className="mt-4 flex w-full space-x-2">
+                <Link
+                  className="px-3 py-2 rounded-lg flex grow gap-2 justify-center items-center transition-colors bg-brand text-brand-white hover:bg-secondary"
+                  href={`products/${product._id}`}
+                >
+                  Edit
                 </Link>
-                <button onClick={() => handleDelete(product._id)}>
+                <button
+                  className="px-3 py-2 rounded-lg flex grow gap-2 justify-center items-center transition-colors border-2 border-red-500 text-red-500 hover:bg-red-500 hover:text-white"
+                  onClick={() => handleDelete(product._id)}
+                >
                   Delete
                 </button>
               </div>

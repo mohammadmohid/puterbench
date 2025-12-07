@@ -45,10 +45,11 @@ export default function CategoryPage() {
       <div className="container mx-auto p-4">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold">Categories</h1>
-          <Link href="categories/new">
-            <button className="px-3 py-2 rounded-lg flex gap-2 items-center transition-colors bg-brand text-brand-white hover:bg-secondary">
-              Add New Category
-            </button>
+          <Link
+            className="px-3 py-2 rounded-lg flex gap-2 items-center transition-colors bg-brand text-brand-white hover:bg-secondary"
+            href="categories/new"
+          >
+            Add New Category
           </Link>
         </div>
 
@@ -60,6 +61,7 @@ export default function CategoryPage() {
                   <Image
                     src={category.image}
                     alt={category.name}
+                    className="object-contain"
                     fill
                     sizes="25vw"
                   />

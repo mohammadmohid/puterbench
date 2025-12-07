@@ -3,6 +3,7 @@ import CartModal from "./CartModal";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { useAuth } from "@/utils/AuthContext";
+import { fetchCart } from "@/utils/api";
 
 const NavIcons = () => {
   const router = useRouter();
@@ -10,12 +11,12 @@ const NavIcons = () => {
 
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
-  const [cartCount, setCartCount] = useState(0);
+  const [cart, setCart] = useState(null);
 
   useEffect(() => {
     if (user) {
       fetchCart(user._id, user.accessToken)
-        .then((cart) => setCartCount(cart.totalItems || 0))
+        .then((data) => setCart(data))
         .catch((err) => console.error(err));
     }
   }, [user, isCartOpen]);
@@ -62,40 +63,39 @@ const NavIcons = () => {
               />
             </svg>
           </div>
-          <svg
-            className={`text-secondary cursor-pointer ${
-              user ? "block" : "hidden"
-            }`}
-            width="16"
-            height="16"
-            viewBox="0 0 16 16"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-            onClick={handleProfile}
-          >
-            <path
-              d="M4 6L8 10L12 6"
-              stroke="currentColor"
-              strokeWidth="1.6"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        </div>
-        <div
-          className={`mt-2 absolute right-0 z-30 flex flex-col ${
-            isProfileOpen ? "block" : "hidden"
-          } gap-2 rounded-xl p-4 bg-[#F5F5F5] border-[1px] border-border-default transition-opacity ease-in-out shadow-lg w-auto min-w-max`}
-        >
-          <div className="px-3 py-2 hover:bg-white rounded cursor-pointer">
-            <Link href="/profile">My Profile</Link>
-          </div>
-          {user?.isAdmin && (
-            <div className="px-3 py-2 hover:bg-white rounded cursor-pointer">
-              <Link href="/admin">Admin Dashboard</Link>
-            </div>
+          {user && (
+            <svg
+              className={"text-secondary cursor-pointer"}
+              width="16"
+              height="16"
+              viewBox="0 0 16 16"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              onClick={handleProfile}
+            >
+              <path
+                d="M4 6L8 10L12 6"
+                stroke="currentColor"
+                strokeWidth="1.6"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
           )}
-          {/* <div className="group flex min-w-fit flex-shrink-0 items-center gap-2 px-3 py-2 rounded-lg transition-colors border-2 border-transparent hover:text-brand bg-[#F5F5F5] active:bg-brand active:text-brand-white hover:border-brand whitespace-nowrap">
+        </div>
+        {isProfileOpen && (
+          <div
+            className={`mt-2 absolute right-0 z-30 flex flex-col gap-2 rounded-xl p-4 bg-[#F5F5F5] border-[1px] border-border-default transition-opacity ease-in-out shadow-lg w-auto min-w-max`}
+          >
+            <div className="px-3 py-2 rounded-lg transition-colors border-2 border-transparent hover:text-brand bg-[#F5F5F5] active:bg-brand active:text-brand-white hover:border-brand whitespace-nowrap rounded cursor-pointer">
+              <Link href="/profile">My Profile</Link>
+            </div>
+            {user?.isAdmin && (
+              <div className="px-3 py-2 rounded-lg transition-colors border-2 border-transparent hover:text-brand bg-[#F5F5F5] active:bg-brand active:text-brand-white hover:border-brand whitespace-nowrap cursor-pointer">
+                <Link href="/admin">Admin Dashboard</Link>
+              </div>
+            )}
+            {/* <div className="group flex min-w-fit flex-shrink-0 items-center gap-2 px-3 py-2 rounded-lg transition-colors border-2 border-transparent hover:text-brand bg-[#F5F5F5] active:bg-brand active:text-brand-white hover:border-brand whitespace-nowrap">
             <svg
               width="16"
               height="16"
@@ -115,28 +115,29 @@ const NavIcons = () => {
               Order History
             </Link>
           </div> */}
-          <div className="h-[1px] bg-gray-300 my-1"></div>
-          <button
-            onClick={handleLogout}
-            className="group flex min-w-fit flex-shrink-0 items-center gap-2 px-3 py-2 rounded-lg transition-colors border-2 border-transparent hover:text-red-600 bg-[#F5F5F5] active:bg-red-600 active:text-brand-white hover:border-red-600 whitespace-nowrap"
-          >
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 16 16"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
+            <div className="h-[1px] bg-gray-300 my-1"></div>
+            <button
+              onClick={handleLogout}
+              className="group flex min-w-fit flex-shrink-0 items-center gap-2 px-3 py-2 rounded-lg transition-colors border-2 border-transparent hover:text-red-600 bg-[#F5F5F5] active:bg-red-600 active:text-brand-white hover:border-red-600 whitespace-nowrap"
             >
-              <path
-                fillRule="evenodd"
-                clipRule="evenodd"
-                d="M2 2.75C2 1.7835 2.7835 1 3.75 1H6.25C6.66421 1 7 1.33579 7 1.75C7 2.16421 6.66421 2.5 6.25 2.5H3.75C3.61193 2.5 3.5 2.61193 3.5 2.75V13.25C3.5 13.3881 3.61193 13.5 3.75 13.5H6.25C6.66421 13.5 7 13.8358 7 14.25C7 14.6642 6.66421 15 6.25 15H3.75C2.7835 15 2 14.2165 2 13.25V2.75ZM12.4393 7.25H6.75002C6.33581 7.25 6.00002 7.58579 6.00002 8C6.00002 8.41422 6.33581 8.75 6.75002 8.75H12.4393L10.4697 10.7197C10.1768 11.0126 10.1768 11.4874 10.4697 11.7803C10.7626 12.0732 11.2374 12.0732 11.5303 11.7803L14.7803 8.53033C15.0732 8.23744 15.0732 7.76256 14.7803 7.46967L11.5303 4.21967C11.2374 3.92678 10.7626 3.92678 10.4697 4.21967C10.1768 4.51256 10.1768 4.98744 10.4697 5.28033L12.4393 7.25Z"
-                fill="currentColor"
-              />
-            </svg>
-            <span className="select-none">Logout</span>
-          </button>
-        </div>
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 16 16"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  fillRule="evenodd"
+                  clipRule="evenodd"
+                  d="M2 2.75C2 1.7835 2.7835 1 3.75 1H6.25C6.66421 1 7 1.33579 7 1.75C7 2.16421 6.66421 2.5 6.25 2.5H3.75C3.61193 2.5 3.5 2.61193 3.5 2.75V13.25C3.5 13.3881 3.61193 13.5 3.75 13.5H6.25C6.66421 13.5 7 13.8358 7 14.25C7 14.6642 6.66421 15 6.25 15H3.75C2.7835 15 2 14.2165 2 13.25V2.75ZM12.4393 7.25H6.75002C6.33581 7.25 6.00002 7.58579 6.00002 8C6.00002 8.41422 6.33581 8.75 6.75002 8.75H12.4393L10.4697 10.7197C10.1768 11.0126 10.1768 11.4874 10.4697 11.7803C10.7626 12.0732 11.2374 12.0732 11.5303 11.7803L14.7803 8.53033C15.0732 8.23744 15.0732 7.76256 14.7803 7.46967L11.5303 4.21967C11.2374 3.92678 10.7626 3.92678 10.4697 4.21967C10.1768 4.51256 10.1768 4.98744 10.4697 5.28033L12.4393 7.25Z"
+                  fill="currentColor"
+                />
+              </svg>
+              <span className="select-none">Logout</span>
+            </button>
+          </div>
+        )}
       </div>
       <div className="h-10 border-l-[1px] border-border-default"></div>
       <div
@@ -161,11 +162,11 @@ const NavIcons = () => {
         <p className="hidden md:block font-semibold select-none">Cart</p>
         <div className="relative w-5 h-5">
           <p className="absolute select-none -top-2 right-0 w-6 h-6 z-10 text-sm flex justify-center items-center rounded-full bg-secondary text-brand-white text-center">
-            {cartCount}
+            {cart ? cart.items.length : 0}
           </p>
         </div>
       </div>
-      {isCartOpen && <CartModal />}
+      {isCartOpen && <CartModal cart={cart} />}
     </div>
   );
 };
