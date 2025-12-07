@@ -21,6 +21,16 @@ export const fetchUserProfile = async (token) => {
   return response.json();
 };
 
+export const updateUserProfile = async (userData, token) => {
+  const response = await fetch(`${API_LINK}/user/profile`, {
+    method: "PUT",
+    headers: getHeaders(token),
+    body: JSON.stringify(userData),
+  });
+  if (!response.ok) throw new Error("Failed to update profile");
+  return response.json();
+};
+
 // Product API
 export const fetchProducts = async () => {
   const response = await fetch(`${API_LINK}/products/getProducts`);
@@ -153,5 +163,43 @@ export const removeFromCart = async (userId, productId, token) => {
     body: JSON.stringify({ userId, productId }),
   });
   if (!response.ok) throw new Error("Failed to remove item");
+  return response.json();
+};
+
+// Order API
+export const createOrder = async (orderData, token) => {
+  const response = await fetch(`${API_LINK}/orders`, {
+    method: "POST",
+    headers: getHeaders(token),
+    body: JSON.stringify(orderData),
+  });
+  if (!response.ok) throw new Error("Failed to create order");
+  return response.json();
+};
+
+export const fetchMyOrders = async (token) => {
+  const response = await fetch(`${API_LINK}/orders/myorders`, {
+    headers: getHeaders(token),
+  });
+  if (!response.ok) throw new Error("Failed to fetch orders");
+  return response.json();
+};
+
+export const fetchAllOrders = async (token) => {
+  const response = await fetch(`${API_LINK}/orders`, {
+    headers: getHeaders(token),
+  });
+  if (!response.ok) throw new Error("Failed to fetch orders");
+  return response.json();
+};
+
+// Review API
+export const createProductReview = async (productId, reviewData, token) => {
+  const response = await fetch(`${API_LINK}/products/${productId}/reviews`, {
+    method: "POST",
+    headers: getHeaders(token),
+    body: JSON.stringify(reviewData),
+  });
+  if (!response.ok) throw new Error(await response.text());
   return response.json();
 };

@@ -89,131 +89,52 @@ const HeaderSub = () => {
         } absolute flex flex-col md:flex-row gap-4 z-20 transition-opacity p-4 md:px-8 w-full bg-brand-white border-b-[1px] border-border-default`}
       >
         <ul className="flex md:flex-col gap-4 font-semibold">
-          <Link
-            className="group flex flex-col gap-2 md:flex-row items-center min-w-max"
-            href="/products"
-          >
-            <Image
-              src="/all-categories.webp"
-              alt=""
-              className="rounded-full border-2 bg-white border-brand w-24 h-24 object-cover"
-              width={125}
-              height={125}
-            />
-            <li className="group-hover:underline decoration-brand decoration-2">
-              All Categories
-            </li>
-          </Link>
-          <Link
-            className="group flex flex-col gap-2 md:flex-row items-center min-w-max"
-            href="/products?cat=prebuilt"
-          >
-            <Image
-              src="/prebuilt.avif"
-              alt=""
-              className="rounded-full border-2 bg-white border-brand w-24 h-24 object-cover"
-              width={125}
-              height={125}
-            />
-            <li className="group-hover:underline decoration-brand decoration-2">
-              Pre-Built
-            </li>
-          </Link>
+          <li className="min-w-max">
+            <Link
+              className="group flex flex-col gap-2 md:flex-row items-center"
+              href="/products"
+            >
+              <Image
+                src="/all-categories.webp"
+                alt=""
+                className="rounded-full border-2 bg-white border-brand w-24 h-24 object-cover"
+                width={125}
+                height={125}
+              />
+              <span className="group-hover:underline decoration-brand decoration-2">
+                All Categories
+              </span>
+            </Link>
+          </li>
+          <li className="min-w-max">
+            <Link
+              className="group flex flex-col gap-2 md:flex-row items-center"
+              href="/products?cat=prebuilt"
+            >
+              <Image
+                src="/prebuilt.avif"
+                alt=""
+                className="rounded-full border-2 bg-white border-brand w-24 h-24 object-cover"
+                width={125}
+                height={125}
+              />
+              <span className="group-hover:underline decoration-brand decoration-2">
+                Pre-Built
+              </span>
+            </Link>
+          </li>
         </ul>
         <div className="min-w-full border-t-[1px] md:min-w-max md:border-t-0 md:min-h-full md:border-l-[1px] border-border-default"></div>
         <ul className="flex md:flex-col md:h-auto max-lg:max-h-[50dvh] lg:max-h-[30dvh] gap-4 flex-wrap font-medium">
-          {/* <Link
-            className="hover:underline decoration-brand decoration-2"
-            href="/products?cat=cases"
-          >
-            <li>Cases</li>
-          </Link>
-          <Link
-            className="hover:underline  decoration-brand decoration-2"
-            href="/products?cat=coolers"
-          >
-            <li>Coolers / Cooling Solutions</li>
-          </Link>
-          <Link
-            className="hover:underline  decoration-brand decoration-2"
-            href="/products?cat=graphics-cards"
-          >
-            <li>Graphics Cards (GPU)</li>
-          </Link>
-          <Link
-            className="hover:underline  decoration-brand decoration-2"
-            href="/products?cat=hard-drives"
-          >
-            <li>Hard Drives</li>
-          </Link>
-          <Link
-            className="hover:underline  decoration-brand decoration-2"
-            href="/products?cat=audio"
-          >
-            <li>Headphones / Headsets / Mic</li>
-          </Link>
-          <Link
-            className="hover:underline  decoration-brand decoration-2"
-            href="/products?cat=keyboard"
-          >
-            <li>Keyboard</li>
-          </Link>
-          <Link
-            className="hover:underline  decoration-brand decoration-2"
-            href="/products?cat=monitors"
-          >
-            <li>Monitors</li>
-          </Link>
-          <Link
-            className="hover:underline  decoration-brand decoration-2"
-            href="/products?cat=memory"
-          >
-            <li>Memory (RAM)</li>
-          </Link>
-          <Link
-            className="hover:underline  decoration-brand decoration-2"
-            href="/products?cat=motherboards"
-          >
-            <li>Motherboards</li>
-          </Link>
-          <Link
-            className="hover:underline  decoration-brand decoration-2"
-            href="/products?cat=mouse"
-          >
-            <li>Mouse</li>
-          </Link>
-          <Link
-            className="hover:underline  decoration-brand decoration-2"
-            href="/products?cat=peripherals"
-          >
-            <li>Peripherals</li>
-          </Link>
-          <Link
-            className="hover:underline  decoration-brand decoration-2"
-            href="/products?cat=power-supply"
-          >
-            <li>Power Supply (PSU)</li>
-          </Link>
-          <Link
-            className="hover:underline  decoration-brand decoration-2"
-            href="/products?cat=processor"
-          >
-            <li>Procesors (CPU)</li>
-          </Link>
-          <Link
-            className="hover:underline  decoration-brand decoration-2"
-            href="/products?cat=ssd"
-          >
-            <li>Solid-State Drives (SSD)</li>
-          </Link> */}
-          {categories.map((category, index) => (
-            <Link
-              key={index}
-              className="hover:underline  decoration-brand decoration-2"
-              href="/"
-            >
-              <li>{category.name}</li>
-            </Link>
+          {categories.map((category) => (
+            <li key={category._id}>
+              <Link
+                className="hover:underline decoration-brand decoration-2"
+                href={`/products?category=${category._id}`}
+              >
+                {category.name}
+              </Link>
+            </li>
           ))}
         </ul>
       </div>

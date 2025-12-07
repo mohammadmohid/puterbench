@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { fetchUserProfile, API_LINK } from "./api"; // Ensure API_LINK is exported or hardcoded here if needed
+import { fetchUserProfile, API_LINK } from "./api";
 
 const AuthContext = createContext();
 

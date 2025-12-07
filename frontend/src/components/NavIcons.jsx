@@ -1,7 +1,7 @@
 import Link from "next/link";
 import CartModal from "./CartModal";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "@/utils/AuthContext";
 
 const NavIcons = () => {
@@ -10,6 +10,15 @@ const NavIcons = () => {
 
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [cartCount, setCartCount] = useState(0);
+
+  useEffect(() => {
+    if (user) {
+      fetchCart(user._id, user.accessToken)
+        .then((cart) => setCartCount(cart.totalItems || 0))
+        .catch((err) => console.error(err));
+    }
+  }, [user, isCartOpen]);
 
   const handleProfile = () => {
     if (!user) {
@@ -33,7 +42,7 @@ const NavIcons = () => {
   return (
     <div className="flex min-w-max whitespace-nowrap gap-2 md:gap-4 items-center">
       <div className="relative">
-        <div className="flex gap-2 items-center">
+        <div className="flex gap-2 items-center" onClick={handleProfile}>
           <div className="relative outline outline-[1px] outline-brand rounded-md w-[25px] h-[25px] ">
             <svg
               className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-brand cursor-pointer"
@@ -42,7 +51,6 @@ const NavIcons = () => {
               viewBox="0 0 12 13"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
-              onClick={handleProfile}
             >
               <path
                 d="M5.99984 5.79995C5.21318 5.79995 4.54984 5.52995 4.00984 4.98995C3.46984 4.44995 3.19984 3.78662 3.19984 2.99995C3.19984 2.21328 3.46984 1.54995 4.00984 1.00995C4.54984 0.469951 5.21318 0.199951 5.99984 0.199951C6.78651 0.199951 7.44984 0.469951 7.98984 1.00995C8.52984 1.54995 8.79984 2.21328 8.79984 2.99995C8.79984 3.78662 8.52984 4.44995 7.98984 4.98995C7.44984 5.52995 6.78651 5.79995 5.99984 5.79995Z"
@@ -79,7 +87,15 @@ const NavIcons = () => {
             isProfileOpen ? "block" : "hidden"
           } gap-2 rounded-xl p-4 bg-[#F5F5F5] border-[1px] border-border-default transition-opacity ease-in-out shadow-lg w-auto min-w-max`}
         >
-          <div className="group flex min-w-fit flex-shrink-0 items-center gap-2 px-3 py-2 rounded-lg transition-colors border-2 border-transparent hover:text-brand bg-[#F5F5F5] active:bg-brand active:text-brand-white hover:border-brand whitespace-nowrap">
+          <div className="px-3 py-2 hover:bg-white rounded cursor-pointer">
+            <Link href="/profile">My Profile</Link>
+          </div>
+          {user?.isAdmin && (
+            <div className="px-3 py-2 hover:bg-white rounded cursor-pointer">
+              <Link href="/admin">Admin Dashboard</Link>
+            </div>
+          )}
+          {/* <div className="group flex min-w-fit flex-shrink-0 items-center gap-2 px-3 py-2 rounded-lg transition-colors border-2 border-transparent hover:text-brand bg-[#F5F5F5] active:bg-brand active:text-brand-white hover:border-brand whitespace-nowrap">
             <svg
               width="16"
               height="16"
@@ -98,7 +114,8 @@ const NavIcons = () => {
             <Link className="select-none" href="/history">
               Order History
             </Link>
-          </div>
+          </div> */}
+          <div className="h-[1px] bg-gray-300 my-1"></div>
           <button
             onClick={handleLogout}
             className="group flex min-w-fit flex-shrink-0 items-center gap-2 px-3 py-2 rounded-lg transition-colors border-2 border-transparent hover:text-red-600 bg-[#F5F5F5] active:bg-red-600 active:text-brand-white hover:border-red-600 whitespace-nowrap"
@@ -144,7 +161,7 @@ const NavIcons = () => {
         <p className="hidden md:block font-semibold select-none">Cart</p>
         <div className="relative w-5 h-5">
           <p className="absolute select-none -top-2 right-0 w-6 h-6 z-10 text-sm flex justify-center items-center rounded-full bg-secondary text-brand-white text-center">
-            1
+            {cartCount}
           </p>
         </div>
       </div>

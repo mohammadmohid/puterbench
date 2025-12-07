@@ -1,10 +1,42 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import ProtectedRoute from "@/components/ProtectedRoute";
+import { fetchProducts, fetchCategories, fetchAllOrders } from "@/utils/api";
+import { useAuth } from "@/utils/AuthContext";
 import Link from "next/link";
 import Image from "next/image";
 
 export default function AdminsPage() {
+  const { user } = useAuth();
+  const [stats, setStats] = useState({
+    products: 0,
+    categories: 0,
+    orders: 0,
+    revenue: 0,
+  });
+
+  useEffect(() => {
+    if (user?.isAdmin) {
+      Promise.all([
+        fetchProducts(),
+        fetchCategories(),
+        fetchAllOrders(user.accessToken),
+      ]).then(([products, categories, orders]) => {
+        const revenue = orders.reduce(
+          (acc, order) => acc + order.totalPrice,
+          0
+        );
+        setStats({
+          products: products.length,
+          categories: categories.length,
+          orders: orders.length,
+          revenue,
+        });
+      });
+    }
+  }, [user]);
+
   return (
     <ProtectedRoute adminOnly={true}>
       <div className="container mx-auto p-4">
@@ -21,6 +53,24 @@ export default function AdminsPage() {
                 Add New Category
               </button>
             </Link>
+          </div>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+          <div className="bg-blue-100 p-6 rounded-lg text-center">
+            <h3 className="text-xl font-bold">{stats.products}</h3>
+            <p className="text-gray-600">Total Products</p>
+          </div>
+          <div className="bg-green-100 p-6 rounded-lg text-center">
+            <h3 className="text-xl font-bold">{stats.categories}</h3>
+            <p className="text-gray-600">Categories</p>
+          </div>
+          <div className="bg-yellow-100 p-6 rounded-lg text-center">
+            <h3 className="text-xl font-bold">{stats.orders}</h3>
+            <p className="text-gray-600">Total Orders</p>
+          </div>
+          <div className="bg-purple-100 p-6 rounded-lg text-center">
+            <h3 className="text-xl font-bold">Rs. {stats.revenue}</h3>
+            <p className="text-gray-600">Total Revenue</p>
           </div>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">

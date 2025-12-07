@@ -32,100 +32,128 @@ const Footer = () => {
       <div className="flex flex-col gap-2">
         <h1 className="font-semibold mb-1">Shop</h1>
         <ul className="text-balance flex flex-col gap-2">
-          <Link
-            className="hover:underline decoration-brand decoration-2"
-            href="/"
-          >
-            <li>Graphics Cards (GPU)</li>
-          </Link>
-          <Link
-            className="hover:underline decoration-brand decoration-2"
-            href="/"
-          >
-            <li>Procesors (CPU)</li>
-          </Link>
-          <Link
-            className="hover:underline decoration-brand decoration-2"
-            href="/"
-          >
-            <li>Solid-State Drive (SSD)</li>
-          </Link>
-          <Link
-            className="hover:underline decoration-brand decoration-2"
-            href="/"
-          >
-            <li>Monitors</li>
-          </Link>
-          <Link
-            className="hover:underline decoration-brand decoration-2"
-            href="/"
-          >
-            <li>Peripherals</li>
-          </Link>
-          <Link
-            className="hover:underline decoration-brand decoration-2"
-            href="/"
-          >
-            <li>Memory (RAM)</li>
-          </Link>
-          <Link
-            className="hover:underline decoration-brand decoration-2"
-            href="/"
-          >
-            <li>Hard Drives</li>
-          </Link>
+          <li>
+            <Link
+              className="hover:underline decoration-brand decoration-2"
+              href="/products"
+            >
+              Graphics Cards (GPU)
+            </Link>
+          </li>
+          <li>
+            <Link
+              className="hover:underline decoration-brand decoration-2"
+              href="/products"
+            >
+              Procesors (CPU)
+            </Link>
+          </li>
+          <li>
+            <Link
+              className="hover:underline decoration-brand decoration-2"
+              href="/products"
+            >
+              Solid-State Drive (SSD)
+            </Link>
+          </li>
+          <li>
+            <Link
+              className="hover:underline decoration-brand decoration-2"
+              href="/products"
+            >
+              Monitors
+            </Link>
+          </li>
+          <li>
+            <Link
+              className="hover:underline decoration-brand decoration-2"
+              href="/products"
+            >
+              Peripherals
+            </Link>
+          </li>
+          <li>
+            <Link
+              className="hover:underline decoration-brand decoration-2"
+              href="/products"
+            >
+              Memory (RAM)
+            </Link>
+          </li>
+          <li>
+            <Link
+              className="hover:underline decoration-brand decoration-2"
+              href="/products"
+            >
+              Hard Drives
+            </Link>
+          </li>
         </ul>
       </div>
       <div className="flex flex-col gap-2">
         <h1 className="font-semibold mb-1">Account</h1>
         <ul className="text-balance flex flex-col gap-2">
-          <Link
-            className="hover:underline decoration-brand decoration-2"
-            href="/"
-          >
-            <li>Sign Up</li>
-          </Link>
-          <Link
-            className="hover:underline decoration-brand decoration-2"
-            href="/"
-          >
-            <li>My Account</li>
-          </Link>
-          <Link
-            className="hover:underline decoration-brand decoration-2"
-            href="/"
-          >
-            <li>Shopping Cart</li>
-          </Link>
-          <Link
-            className="hover:underline decoration-brand decoration-2"
-            href="/"
-          >
-            <li>Order History</li>
-          </Link>
+          <li>
+            <Link
+              className="hover:underline decoration-brand decoration-2"
+              href="/register"
+            >
+              Sign Up
+            </Link>
+          </li>
+          <li>
+            <Link
+              className="hover:underline decoration-brand decoration-2"
+              href="/profile"
+            >
+              My Account
+            </Link>
+          </li>
+          <li>
+            <Link
+              className="hover:underline decoration-brand decoration-2"
+              href="/cart"
+            >
+              Shopping Cart
+            </Link>
+          </li>
+          <li>
+            <Link
+              className="hover:underline decoration-brand decoration-2"
+              href="/history"
+            >
+              Order History
+            </Link>
+          </li>
         </ul>
       </div>
       <div className="flex flex-col gap-2">
         <h1 className="font-semibold mb-1">Corporate</h1>
         <ul className="text-balance flex flex-col gap-2">
-          <Link
-            className="hover:underline decoration-brand decoration-2"
-            href="/"
-          >
-            <li>About Us</li>
-          </Link>
-          <Link
-            className="hover:underline decoration-brand decoration-2"
-            href="/"
-          >
-            <li>Contact</li>
-          </Link>
-          <Link
-            className="hover:underline decoration-brand decoration-2"
-            href="/"
-          >
-            <li>FAQs</li>
-          </Link>
+          <li>
+            <Link
+              className="hover:underline decoration-brand decoration-2"
+              href="/"
+            >
+              About Us
+            </Link>
+          </li>
+          <li>
+            <Link
+              className="hover:underline decoration-brand decoration-2"
+              href="/"
+            >
+              Contact
+            </Link>
+          </li>
+          <li>
+            <Link
+              className="hover:underline decoration-brand decoration-2"
+              href="/"
+            >
+              FAQs
+            </Link>
+          </li>
         </ul>
       </div>
       <div className="flex flex-col gap-2">
