@@ -7,6 +7,7 @@ import {
   deleteProductImage,
   deleteProduct,
 } from "../controllers/productController.js";
+import { protect, admin } from "../middleware/authMiddleware.js";
 import { upload } from "../config/cloudinary.js";
 
 const router = express.Router();
@@ -16,22 +17,14 @@ const uploadFields = upload.fields([
   { name: "images", maxCount: 10 },
 ]);
 
-// Route to create a new product
-router.post("/addProduct", uploadFields, createProduct);
-
-// Route to fetch all products
+// Public
 router.get("/getProducts", getProducts);
-
-// Route to fetch a single product by ID
 router.get("/getProduct/:id", getProductById);
 
-// Route to update a product by ID
-router.put("/updateProduct/:id", uploadFields, updateProduct);
-
-// Route to delete a product by ID
-router.delete("/deleteProduct/:id", deleteProduct);
-
-// Route to delete a product image by ID
-router.delete("/:id/images/:imageIndex", deleteProductImage);
+// Protected/Admin
+router.post("/addProduct", protect, admin, uploadFields, createProduct);
+router.put("/updateProduct/:id", protect, admin, uploadFields, updateProduct);
+router.delete("/deleteProduct/:id", protect, admin, deleteProduct);
+router.delete("/:id/images/:imageIndex", protect, admin, deleteProductImage);
 
 export default router;

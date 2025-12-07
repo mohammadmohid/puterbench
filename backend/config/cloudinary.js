@@ -1,6 +1,8 @@
 import { v2 as cloudinary } from "cloudinary";
+configDotenv();
 import { CloudinaryStorage } from "multer-storage-cloudinary";
 import multer from "multer";
+import { configDotenv } from "dotenv";
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -8,7 +10,6 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-// Storage engine
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {

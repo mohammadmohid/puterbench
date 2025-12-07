@@ -1,16 +1,24 @@
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import { useAuth } from "@/utils/AuthContext";
 
-const ProtectedRoute = ({ children }) => {
+const ProtectedRoute = ({ children, adminOnly = false }) => {
   const router = useRouter();
-
-  const jwt = document.cookie.split("; ").find((row) => row.startsWith("jwt="));
+  const { user, loading } = useAuth();
 
   useEffect(() => {
-    if (!jwt) {
-      router.push("/login");
+    if (!loading) {
+      if (!user) {
+        router.push("/login");
+      } else if (adminOnly && !user.isAdmin) {
+        router.push("/");
+      }
     }
-  });
+  }, [user, loading, router, adminOnly]);
+
+  if (loading) return <div>Loading...</div>;
+  if (!user) return null;
+  if (adminOnly && !user.isAdmin) return null;
 
   return children;
 };

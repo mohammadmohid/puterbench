@@ -1,22 +1,22 @@
 import express from "express";
-import cors from "cors";
 import dotenv from "dotenv";
+dotenv.config();
+import cors from "cors";
 import cookieParser from "cookie-parser";
 import { connectToMongoDB } from "./config/mongodb.js";
 const port = process.env.PORT || 5000;
 
-// Import routes
 import userRoutes from "./routes/userRoutes.js";
 import categoryRoutes from "./routes/categoryRoutes.js";
 import productRoutes from "./routes/productRoutes.js";
+import cartRoutes from "./routes/cartRoutes.js";
 
-dotenv.config();
 const app = express();
 connectToMongoDB();
 
 app.use(
   cors({
-    origin: ["http://3.92.216.80/"],
+    origin: [process.env.CLIENT_URL || "http://localhost:3000"],
     credentials: true,
   })
 );
@@ -29,8 +29,9 @@ app.use(cookieParser());
 app.use("/user", userRoutes);
 app.use("/categories", categoryRoutes);
 app.use("/products", productRoutes);
+app.use("/cart", cartRoutes);
 
-app.get("/", (req, res) => {
+app.get("/", (res) => {
   res.send("Server is running!");
 });
 

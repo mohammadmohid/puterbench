@@ -3,18 +3,30 @@ import {
   getCategories,
   createCategory,
   deleteCategory,
+  getCategoryById,
+  updateCategory,
 } from "../controllers/categoryController.js";
+import { protect, admin } from "../middleware/authMiddleware.js";
 import { upload } from "../config/cloudinary.js";
 
 const router = express.Router();
 
-// Route to fetch all categories
 router.get("/getCategory", getCategories);
-
-// Route to create a new category
-router.post("/createCategory", upload.single("image"), createCategory);
-
-// Route to delete a category by id.
-router.post("/deleteCategory/:id", deleteCategory);
+router.get("/getCategory/:id", getCategoryById);
+router.post(
+  "/createCategory",
+  protect,
+  admin,
+  upload.single("image"),
+  createCategory
+);
+router.put(
+  "/updateCategory/:id",
+  protect,
+  admin,
+  upload.single("image"),
+  updateCategory
+);
+router.delete("/deleteCategory/:id", protect, admin, deleteCategory);
 
 export default router;

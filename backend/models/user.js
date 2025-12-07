@@ -21,13 +21,16 @@ const userSchema = new mongoose.Schema(
       required: [true, "Password is required"],
       minlength: [8, "Password must be at least 8 characters long"],
     },
+    isAdmin: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,
   }
 );
 
-// Pre-save hook to hash the password
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
 
@@ -40,12 +43,9 @@ userSchema.pre("save", async function (next) {
   }
 });
 
-// Method to compare passwords
 userSchema.methods.comparePassword = async function (candidatePassword) {
   return await bcrypt.compare(candidatePassword, this.password);
 };
 
-// Create the model
 const User = mongoose.model("User", userSchema);
-
 export default User;

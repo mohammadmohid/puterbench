@@ -1,14 +1,17 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
-import { fetchProductById } from "@/utils/api";
+import { useParams, useRouter } from "next/navigation";
+import { addToCart, fetchProductById } from "@/utils/api";
+import { useAuth } from "@/utils/AuthContext";
 import Image from "next/image";
 
 export default function ProductDetails() {
-  const { id } = useParams(); // Get the `id` from the URL
+  const { id } = useParams();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
+  const { user } = useAuth();
+  const router = useRouter();
 
   useEffect(() => {
     if (id) {
@@ -24,6 +27,21 @@ export default function ProductDetails() {
     } catch (error) {
       console.error("Error loading product:", error);
       setLoading(false);
+    }
+  };
+
+  const handleAddToCart = async () => {
+    if (!user) {
+      router.push("/login?returnUrl=/products/" + id);
+      return;
+    }
+
+    try {
+      await addToCart(user._id, product._id, 1, user.accessToken);
+      alert("Product added to cart!");
+    } catch (error) {
+      console.error("Error adding to cart:", error);
+      alert("Failed to add to cart");
     }
   };
 
@@ -60,7 +78,7 @@ export default function ProductDetails() {
 
         <div className="space-y-4">
           <h1 className="text-3xl font-bold text-brand">{product.name}</h1>
-          <p className="text-2xl font-semibold">${product.price}</p>
+          <p className="text-2xl font-semibold">Rs. {product.price}</p>
           <p className="text-gray-600">{product.description}</p>
           {product.richDescription && (
             <div className="prose max-w-none">{product.richDescription}</div>
@@ -77,7 +95,10 @@ export default function ProductDetails() {
               <span className="font-semibold">Rating:</span> {product.rating}/5
               ({product.numReviews} reviews)
             </p>
-            <button className="flex w-52 whitespace-nowrap flex-grow group items-center font-semibold gap-2 justify-center rounded-full text-brand hover:text-brand-white border-2 border-brand hover:bg-brand p-2 md:px-1 md:py-[2px] hover:opacity-90 transition-opacity">
+            <button
+              onClick={handleAddToCart}
+              className="flex w-52 whitespace-nowrap flex-grow group items-center font-semibold gap-2 justify-center rounded-full text-brand hover:text-brand-white border-2 border-brand hover:bg-brand p-2 md:px-1 md:py-[2px] hover:opacity-90 transition-opacity"
+            >
               <svg
                 className="group-hover:text-brand-white"
                 width="16"

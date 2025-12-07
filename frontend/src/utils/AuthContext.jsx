@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { fetchUserProfile, API_LINK } from "./api"; // Ensure API_LINK is exported or hardcoded here if needed
 
 const AuthContext = createContext();
 
@@ -10,14 +11,13 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
-  // Check for existing session on mount
   useEffect(() => {
     checkAuth();
   }, []);
 
   const checkAuth = async () => {
     try {
-      const response = await fetch(`http://3.92.216.80/api/user/refresh`, {
+      const response = await fetch(`${API_LINK}/user/refresh`, {
         method: "GET",
         credentials: "include",
         headers: {
@@ -28,9 +28,17 @@ export const AuthProvider = ({ children }) => {
 
       if (response.ok) {
         const data = await response.json();
-        setUser({ accessToken: data.accessToken });
+        const accessToken = data.accessToken;
+
+        try {
+          const userProfile = await fetchUserProfile(accessToken);
+          setUser({ ...userProfile, accessToken });
+        } catch (err) {
+          console.error("Failed to fetch profile", err);
+          // Fallback if profile fails but token is valid
+          setUser({ accessToken });
+        }
       } else {
-        // Clear user state if refresh fails
         setUser(null);
       }
     } catch (error) {
@@ -43,7 +51,7 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
-      const response = await fetch(`http://3.92.216.80/api/user/signin`, {
+      const response = await fetch(`${API_LINK}/user/signin`, {
         method: "POST",
         headers: {
           Accept: "application/json",
@@ -59,7 +67,7 @@ export const AuthProvider = ({ children }) => {
         throw new Error(data.message);
       }
 
-      setUser({ accessToken: data.accessToken });
+      setUser({ ...data.user, accessToken: data.accessToken });
       return { success: true };
     } catch (error) {
       return { success: false, error: error.message };
@@ -68,7 +76,7 @@ export const AuthProvider = ({ children }) => {
 
   const register = async (name, email, password) => {
     try {
-      const response = await fetch(`http://3.92.216.80/api/user/signup`, {
+      const response = await fetch(`${API_LINK}/user/signup`, {
         method: "POST",
         headers: {
           Accept: "application/json",
@@ -84,7 +92,6 @@ export const AuthProvider = ({ children }) => {
         throw new Error(data.message);
       }
 
-      // After successful registration, log the user in
       return await login(email, password);
     } catch (error) {
       return { success: false, error: error.message };
@@ -93,7 +100,7 @@ export const AuthProvider = ({ children }) => {
 
   const logout = async () => {
     try {
-      const response = await fetch(`http://3.92.216.80/api/user/logout`, {
+      const response = await fetch(`${API_LINK}/user/logout`, {
         method: "POST",
         credentials: "include",
         headers: {

@@ -1,6 +1,27 @@
-export const API_LINK = "http://3.92.216.80/api";
+export const API_LINK =
+  process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
 
-// Product API functions
+const getHeaders = (token, isFormData = false) => {
+  const headers = {};
+  if (token) {
+    headers["Authorization"] = `Bearer ${token}`;
+  }
+  if (!isFormData) {
+    headers["Content-Type"] = "application/json";
+  }
+  return headers;
+};
+
+// User API
+export const fetchUserProfile = async (token) => {
+  const response = await fetch(`${API_LINK}/user/profile`, {
+    headers: getHeaders(token),
+  });
+  if (!response.ok) throw new Error("Failed to fetch profile");
+  return response.json();
+};
+
+// Product API
 export const fetchProducts = async () => {
   const response = await fetch(`${API_LINK}/products/getProducts`);
   if (!response.ok) throw new Error("Failed to fetch products");
@@ -13,63 +34,124 @@ export const fetchProductById = async (id) => {
   return response.json();
 };
 
-export const createProduct = async (formData) => {
+export const createProduct = async (formData, token) => {
   const response = await fetch(`${API_LINK}/products/addProduct`, {
     method: "POST",
+    headers: getHeaders(token, true),
     body: formData,
   });
   if (!response.ok) throw new Error("Failed to create product");
   return response.json();
 };
 
-export const updateProduct = async (id, formData) => {
+export const updateProduct = async (id, formData, token) => {
   const response = await fetch(`${API_LINK}/products/updateProduct/${id}`, {
     method: "PUT",
+    headers: getHeaders(token, true),
     body: formData,
   });
   if (!response.ok) throw new Error("Failed to update product");
   return response.json();
 };
 
-export const deleteProduct = async (id) => {
+export const deleteProduct = async (id, token) => {
   const response = await fetch(`${API_LINK}/products/deleteProduct/${id}`, {
     method: "DELETE",
+    headers: getHeaders(token),
   });
   if (!response.ok) throw new Error("Failed to delete product");
   return response.json();
 };
 
-export const deleteProductImage = async (productId, imageIndex) => {
+export const deleteProductImage = async (productId, imageIndex, token) => {
   const response = await fetch(
     `${API_LINK}/products/${productId}/images/${imageIndex}`,
     {
       method: "DELETE",
+      headers: getHeaders(token),
     }
   );
   if (!response.ok) throw new Error("Failed to delete image");
   return response.json();
 };
 
-// Category API functions
+// Category API
 export const fetchCategories = async () => {
   const response = await fetch(`${API_LINK}/categories/getCategory`);
   if (!response.ok) throw new Error("Failed to fetch categories");
   return response.json();
 };
 
-export const createCategory = async (formData) => {
+export const fetchCategoryById = async (id) => {
+  const response = await fetch(`${API_LINK}/categories/getCategory/${id}`);
+  if (!response.ok) throw new Error("Failed to fetch category");
+  return response.json();
+};
+
+export const createCategory = async (formData, token) => {
   const response = await fetch(`${API_LINK}/categories/createCategory`, {
     method: "POST",
+    headers: getHeaders(token, true),
     body: formData,
   });
   if (!response.ok) throw new Error("Failed to create category");
   return response.json();
 };
 
-export const deleteCategory = async (id) => {
+export const updateCategory = async (id, formData, token) => {
+  const response = await fetch(`${API_LINK}/categories/updateCategory/${id}`, {
+    method: "PUT",
+    headers: getHeaders(token, true),
+    body: formData,
+  });
+  if (!response.ok) throw new Error("Failed to update category");
+  return response.json();
+};
+
+export const deleteCategory = async (id, token) => {
   const response = await fetch(`${API_LINK}/categories/deleteCategory/${id}`, {
-    method: "POST",
+    method: "DELETE",
+    headers: getHeaders(token),
   });
   if (!response.ok) throw new Error("Failed to delete category");
+  return response.json();
+};
+
+// Cart API
+export const fetchCart = async (userId, token) => {
+  const response = await fetch(`${API_LINK}/cart/${userId}`, {
+    headers: getHeaders(token),
+  });
+  if (!response.ok) throw new Error("Failed to fetch cart");
+  return response.json();
+};
+
+export const addToCart = async (userId, productId, quantity, token) => {
+  const response = await fetch(`${API_LINK}/cart/addToCart`, {
+    method: "POST",
+    headers: getHeaders(token),
+    body: JSON.stringify({ userId, productId, quantity }),
+  });
+  if (!response.ok) throw new Error("Failed to add to cart");
+  return response.json();
+};
+
+export const updateCartItem = async (userId, productId, quantity, token) => {
+  const response = await fetch(`${API_LINK}/cart/updateCart`, {
+    method: "PUT",
+    headers: getHeaders(token),
+    body: JSON.stringify({ userId, productId, quantity }),
+  });
+  if (!response.ok) throw new Error("Failed to update cart");
+  return response.json();
+};
+
+export const removeFromCart = async (userId, productId, token) => {
+  const response = await fetch(`${API_LINK}/cart/removeFromCart`, {
+    method: "DELETE",
+    headers: getHeaders(token),
+    body: JSON.stringify({ userId, productId }),
+  });
+  if (!response.ok) throw new Error("Failed to remove item");
   return response.json();
 };

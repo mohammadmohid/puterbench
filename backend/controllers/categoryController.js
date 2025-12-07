@@ -1,4 +1,5 @@
 import Category from "../models/category.js";
+import { deleteImage } from "../config/cloudinary.js";
 
 // Fetch all categories
 const getCategories = async (req, res) => {
@@ -10,6 +11,20 @@ const getCategories = async (req, res) => {
     res.send(categoryList);
   } catch (error) {
     console.error("Error fetching categories:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+// Fetch single category by ID
+const getCategoryById = async (req, res) => {
+  try {
+    const category = await Category.findById(req.params.id);
+    if (!category) {
+      return res.status(404).json({ message: "Category not found" });
+    }
+    res.status(200).json(category);
+  } catch (error) {
+    console.error("Error fetching category:", error);
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
@@ -38,6 +53,39 @@ const createCategory = async (req, res) => {
   }
 };
 
+const updateCategory = async (req, res) => {
+  try {
+    const category = await Category.findById(req.params.id);
+    if (!category) {
+      return res.status(404).json({ message: "Category not found" });
+    }
+
+    const updateData = {
+      name: req.body.name,
+      color: req.body.color,
+    };
+
+    if (req.file && req.file.path) {
+      if (category.image) {
+        const publicId = category.image;
+        await deleteImage(publicId);
+      }
+      updateData.image = req.file.path;
+    }
+
+    const updatedCategory = await Category.findByIdAndUpdate(
+      req.params.id,
+      updateData,
+      { new: true }
+    );
+
+    res.status(200).json(updatedCategory);
+  } catch (error) {
+    console.error("Error updating category:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
 const deleteCategory = async (req, res) => {
   try {
     const deletedCategory = await Category.findByIdAndDelete(req.params.id);
@@ -53,4 +101,10 @@ const deleteCategory = async (req, res) => {
   }
 };
 
-export { getCategories, createCategory, deleteCategory };
+export {
+  getCategories,
+  getCategoryById,
+  createCategory,
+  updateCategory,
+  deleteCategory,
+};

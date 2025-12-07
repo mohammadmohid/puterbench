@@ -11,7 +11,7 @@ const createProduct = async (req, res) => {
     // Handle main image
     let mainImage = "";
     if (req.files && req.files.image && req.files.image.length > 0) {
-      mainImage = req.files.image[0].path; // Access the first image file
+      mainImage = req.files.image[0].path;
     }
 
     // Handle multiple images
@@ -23,15 +23,12 @@ const createProduct = async (req, res) => {
     const product = new Product({
       name: req.body.name,
       description: req.body.description,
-      richDescription: req.body.richDescription,
-      image: mainImage,
-      images: additionalImages,
       brand: req.body.brand,
       price: req.body.price,
       category: req.body.category,
       countInStock: req.body.countInStock,
-      rating: req.body.rating,
-      numReviews: req.body.numReviews,
+      image: mainImage,
+      images: additionalImages,
       isFeatured: req.body.isFeatured,
     });
 

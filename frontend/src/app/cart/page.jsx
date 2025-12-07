@@ -1,44 +1,45 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { fetchCart, updateCartItem, removeFromCart } from "@/utils/api";
+import { useAuth } from "@/utils/AuthContext";
 
-const CartItem = ({ product, updateQuantity, removeItem }) => (
+const CartItem = ({ item, updateQuantity, removeItem }) => (
   <div className="flex flex-row items-start gap-4 p-4 border-b border-border-default">
     <div className="relative w-24 h-24 bg-gray-100 rounded">
       <Image
-        src={product.imageSrc || "/placeholder-img.png"}
+        src={item.product.image || "/placeholder-img.png"}
         alt=""
         fill
         sizes="25vw"
+        className="object-cover"
       />
     </div>
     <div className="flex-grow">
-      <h3 className="font-medium text-lg">{product.name}</h3>
-      <div className="text-sm text-text-secondary">
-        <p>Option 1: {product.option1}</p>
-        <p>Option 2: {product.option2}</p>
-      </div>
-      <p className="text-brand font-medium text-lg mt-2">Rs. {product.price}</p>
+      <h3 className="font-medium text-lg">{item.product.name}</h3>
+      <p className="text-brand font-medium text-lg mt-2">
+        Rs. {item.product.price}
+      </p>
     </div>
     <div className="flex items-center gap-4 mt-2 sm:mt-0">
       <div className="flex items-center">
         <button
-          onClick={() => updateQuantity(product.id, -1)}
+          onClick={() => updateQuantity(item.product._id, item.quantity - 1)}
           className="w-4 h-4 md:w-8 md:h-8 bg-[#F5F5F5] rounded-sm md:rounded-md flex items-center justify-center"
         >
           -
         </button>
-        <span className="w-4 md:w-8 text-center">{product.quantity}</span>
+        <span className="w-4 md:w-8 text-center">{item.quantity}</span>
         <button
-          onClick={() => updateQuantity(product.id, 1)}
+          onClick={() => updateQuantity(item.product._id, item.quantity + 1)}
           className="w-4 h-4 md:w-8 md:h-8 bg-[#F5F5F5] rounded-sm md:rounded-md flex items-center justify-center"
         >
           +
         </button>
       </div>
-      <button onClick={() => removeItem(product.id)}>
+      <button onClick={() => removeItem(item.product._id)}>
         <svg
           className="text-brand"
           width="20"
@@ -58,94 +59,101 @@ const CartItem = ({ product, updateQuantity, removeItem }) => (
 );
 
 const Cart = () => {
-  const [products, setProducts] = useState([
-    {
-      id: 1,
-      name: "Product Name",
-      option1: "Value",
-      option2: "Value",
-      price: 145,
-      quantity: 1,
-    },
-    {
-      id: 2,
-      name: "Product Name",
-      option1: "Value",
-      option2: "Value",
-      price: 145,
-      quantity: 1,
-    },
-    {
-      id: 3,
-      name: "Product Name",
-      option1: "Value",
-      option2: "Value",
-      price: 145,
-      quantity: 1,
-    },
-  ]);
-  const [promoCode, setPromoCode] = useState("");
+  const { user, loading: authLoading } = useAuth();
+  const [cart, setCart] = useState(null);
+  const [cartLoading, setCartLoading] = useState(true);
 
-  const updateQuantity = (id, change) => {
-    setProducts(
-      products.map((product) => {
-        if (product.id === id) {
-          const newQuantity = Math.max(1, product.quantity + change);
-          return { ...product, quantity: newQuantity };
-        }
-        return product;
-      })
+  useEffect(() => {
+    if (user) {
+      loadCart();
+    } else if (!authLoading) {
+      setCartLoading(false);
+    }
+  }, [user, authLoading]);
+
+  const loadCart = async () => {
+    try {
+      const data = await fetchCart(user._id, user.accessToken);
+      setCart(data);
+    } catch (error) {
+      console.error("Error loading cart:", error);
+    } finally {
+      setCartLoading(false);
+    }
+  };
+
+  const handleUpdateQuantity = async (productId, newQuantity) => {
+    if (newQuantity < 1) return; // Optional: separate remove call needed for 0
+    try {
+      await updateCartItem(user._id, productId, newQuantity, user.accessToken);
+      loadCart();
+    } catch (error) {
+      console.error("Failed to update quantity", error);
+    }
+  };
+
+  const handleRemoveItem = async (productId) => {
+    try {
+      await removeFromCart(user._id, productId, user.accessToken);
+      loadCart();
+    } catch (error) {
+      console.error("Failed to remove item", error);
+    }
+  };
+
+  if (authLoading || cartLoading)
+    return <div className="p-8 text-center">Loading Cart...</div>;
+  if (!user)
+    return (
+      <div className="p-8 text-center">
+        Please{" "}
+        <Link href="/login" className="text-brand underline">
+          login
+        </Link>{" "}
+        to view your cart.
+      </div>
     );
-  };
+  if (!cart || !cart.items || cart.items.length === 0)
+    return (
+      <div className="p-8 text-center">
+        Your Cart is Empty.{" "}
+        <Link href="/products" className="text-brand underline">
+          Shop Now
+        </Link>
+      </div>
+    );
 
-  const removeItem = (id) => {
-    setProducts(products.filter((product) => product.id !== id));
-  };
-
-  const subtotal = products.reduce(
-    (sum, product) => sum + product.price * product.quantity,
-    0
-  );
-  const discount = subtotal * 0.2;
+  const discount = 0;
   const deliveryFee = 15;
-  const total = subtotal - discount + deliveryFee;
+  const total = (cart.totalPrice || 0) - discount + deliveryFee;
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
-      {/* Breadcrumb */}
       <div className="text-sm text-gray-500 mb-6">
-        <Link href="/">Home</Link>
-        <span className="mx-2">›</span>
+        <Link href="/">Home</Link> <span className="mx-2">›</span>{" "}
         <span>Cart</span>
       </div>
 
       <h1 className="text-2xl font-bold mb-8">Your Cart</h1>
 
       <div className="flex flex-col lg:flex-row gap-4">
-        {/* Cart Items */}
         <div className="flex-grow border rounded-sm border-b-0 border-border-default">
-          {products.map((product) => (
+          {cart.items.map((item) => (
             <CartItem
-              key={product.id}
-              product={product}
-              updateQuantity={updateQuantity}
-              removeItem={removeItem}
+              key={item.product._id}
+              item={item}
+              updateQuantity={handleUpdateQuantity}
+              removeItem={handleRemoveItem}
             />
           ))}
         </div>
 
-        {/* Order Summary */}
         <div className="lg:w-96 p-6 h-fit border rounded-xl border-border-default">
           <h2 className="text-xl font-semibold mb-6">Order Summary</h2>
-
           <div className="space-y-4">
             <div className="flex justify-between">
               <span>Subtotal</span>
-              <span>Rs. {subtotal}</span>
-            </div>
-            <div className="flex justify-between text-brand">
-              <span>Discount (-20%)</span>
-              <span>-Rs. {discount}</span>
+              <span>Rs. {cart.totalPrice}</span>
             </div>
             <div className="flex justify-between">
               <span>Delivery Fee</span>
@@ -156,35 +164,8 @@ const Cart = () => {
               <span>Rs. {total}</span>
             </div>
           </div>
-
-          <div className="mt-6 flex gap-2 justify-end max-sm:flex-wrap">
-            <input
-              placeholder="Add Promo Code"
-              value={promoCode}
-              onChange={(e) => setPromoCode(e.target.value)}
-              className="flex-grow px-4 border rounded-full border-border-default focus:outline-none"
-            />
-            <button className="px-4 py-2 transition-colors bg-brand hover:bg-secondary text-brand-white rounded-lg">
-              Apply
-            </button>
-          </div>
-
-          <button className="w-full mt-6 px-6 py-3 transition-colors bg-brand hover:bg-secondary text-brand-white font-semibold rounded-lg flex items-center justify-center gap-2">
+          <button className="w-full mt-6 px-6 py-3 bg-brand hover:bg-secondary text-brand-white font-semibold rounded-lg flex items-center justify-center gap-2">
             <span>Checkout</span>
-            <svg
-              width="16"
-              height="14"
-              viewBox="0 0 16 16"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                fillRule="evenodd"
-                clipRule="evenodd"
-                d="M7.76883 1.32695C8.20476 0.891017 8.91156 0.891017 9.34749 1.32695L15.673 7.65254C16.109 8.08847 16.109 8.79527 15.673 9.2312L9.34749 15.5568C8.91156 15.9927 8.20476 15.9927 7.76883 15.5568C7.3329 15.1208 7.3329 14.4141 7.76883 13.9782L12.1888 9.55816H1.11628C0.499782 9.55816 0 9.05837 0 8.44187C0 7.82537 0.499782 7.32559 1.11628 7.32559H12.1888L7.76883 2.90561C7.3329 2.46968 7.3329 1.76288 7.76883 1.32695Z"
-                fill="currentColor"
-              />
-            </svg>
           </button>
         </div>
       </div>

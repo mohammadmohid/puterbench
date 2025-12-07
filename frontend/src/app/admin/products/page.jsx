@@ -5,10 +5,12 @@ import { fetchProducts, deleteProduct } from "@/utils/api";
 import Link from "next/link";
 import Image from "next/image";
 import ProtectedRoute from "@/components/ProtectedRoute";
+import { useAuth } from "@/utils/AuthContext";
 
 export default function ProductsPage() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { user } = useAuth();
 
   useEffect(() => {
     loadProducts();
@@ -28,7 +30,7 @@ export default function ProductsPage() {
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this product?")) {
       try {
-        await deleteProduct(id);
+        await deleteProduct(id, user.accessToken);
         loadProducts();
       } catch (error) {
         console.error("Error deleting product:", error);
@@ -39,7 +41,7 @@ export default function ProductsPage() {
   if (loading) return <div>Loading...</div>;
 
   return (
-    <ProtectedRoute>
+    <ProtectedRoute adminOnly={true}>
       <div className="container mx-auto p-4">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold">Products</h1>
