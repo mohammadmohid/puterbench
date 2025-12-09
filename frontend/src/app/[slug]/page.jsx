@@ -1,5 +1,4 @@
-const SinglePage = () => {
-  return <div className="">SinglePage</div>;
-};
-
-export default SinglePage;
+export default async function Page({ params }) {
+  const { slug } = await params;
+  return <div>{slug}</div>;
+}

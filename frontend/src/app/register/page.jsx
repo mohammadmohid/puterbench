@@ -11,7 +11,7 @@ const RegisterPage = () => {
 
   useEffect(() => {
     handleRedirect();
-  });
+  }, [user, router]);
 
   const handleRedirect = async () => {
     if (user) {

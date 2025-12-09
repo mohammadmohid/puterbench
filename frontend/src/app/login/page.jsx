@@ -11,7 +11,7 @@ const LoginPage = () => {
 
   useEffect(() => {
     handleRedirect();
-  });
+  }, [user, router]);
 
   const handleRedirect = async () => {
     if (user) {

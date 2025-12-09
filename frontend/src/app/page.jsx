@@ -1,109 +1,77 @@
-"use client";
-
 import Link from "next/link";
 import InfoCarousel from "@/components/Carousel";
 import { CircularCard } from "@/components/CircularCard";
-import { FeaturedProducts } from "@/components/FeaturedProducts";
+import { ProductList } from "@/components/ProductList";
 import { fetchCategories, fetchProducts } from "@/utils/api";
-import { useState, useEffect } from "react";
-import LoadingSpinner from "@/components/Loader";
+import { ChevronRight } from "lucide-react";
 
-const HomePage = () => {
-  const [categories, setCategories] = useState([]);
-  const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
+export default async function HomePage() {
+  const categoriesData = fetchCategories();
+  const productsData = fetchProducts();
 
-  useEffect(() => {
-    loadCategories();
-    loadProducts();
-  }, []);
-
-  const loadCategories = async () => {
-    try {
-      const data = await fetchCategories();
-      setCategories(data);
-      setLoading(false);
-    } catch (error) {
-      console.error("Error loading categories:", error);
-      setLoading(false);
-    }
-  };
-
-  const loadProducts = async () => {
-    try {
-      const data = await fetchProducts();
-      setProducts(data);
-      setLoading(false);
-    } catch (error) {
-      console.error("Error loading products:", error);
-      setLoading(false);
-    }
-  };
+  const [categories, products] = await Promise.all([
+    categoriesData,
+    productsData,
+  ]);
 
   const slides = [
-    {
-      title: "Build your PC in realtime",
-      image: "/Illustration.png",
-    },
-    {
-      title: "Lol",
-      image: "/Illustration.png",
-    },
-    {
-      title: "More Lol",
-      image: "/Illustration.png",
-    },
+    { title: "Build your PC in realtime", image: "/Illustration.png" },
+    { title: "Custom Gaming Rigs", image: "/Illustration.png" },
+    { title: "High Performance Parts", image: "/Illustration.png" },
   ];
+
   return (
-    <div className="">
+    <div className="flex flex-col gap-8 pb-12">
       <InfoCarousel slides={slides} interval={5000} />
-      <section className="w-full p-4 md:p-8">
-        <div className="relative flex justify-between items-center mb-5">
-          <h2 className="text-text-default text-xl font-medium underline underline-offset-[12px] decoration-brand decoration-2">
+
+      <section className="container mx-auto px-4 md:px-8">
+        <div className="flex justify-between items-end mb-6 border-b border-border-default pb-2">
+          <h2 className="text-2xl font-bold text-gray-900">
             Shop <span className="text-brand">Top Categories</span>
           </h2>
           <Link
             href="/products"
-            className="flex items-center text-text-default hover:text-brand transition-colors"
+            className="group flex items-center text-sm font-medium text-gray-600 hover:text-brand transition-colors"
           >
             View All
-            <svg
-              className="text-brand ml-1"
-              width="16"
-              height="16"
-              viewBox="0 0 16 16"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M6 12L10 8L6 4"
-                stroke="currentColor"
-                strokeWidth="1.6"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
+            <ChevronRight className="ml-1 w-4 h-4 transition-transform group-hover:translate-x-1" />
           </Link>
-          <div className="absolute bottom-0 translate-y-2 h-[1px] w-full bg-border-default rounded-md"></div>
         </div>
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 gap-4">
-          {loading ? (
-            <LoadingSpinner />
-          ) : (
+
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
+          {categories?.length > 0 ? (
             categories.map((category) => (
               <CircularCard
                 key={category._id}
                 name={category.name}
                 imageSrc={category.image}
-                href="/products"
+                href={`/products?category=${category._id}`}
               />
             ))
+          ) : (
+            <p className="col-span-full text-center text-gray-500 py-8">
+              No categories found.
+            </p>
           )}
         </div>
       </section>
-      {loading ? <LoadingSpinner /> : <FeaturedProducts products={products} />}
+
+      <section className="container mx-auto px-4 md:px-8">
+        <div className="flex justify-between items-end mb-6 border-b border-border-default pb-2">
+          <h2 className="text-2xl font-bold text-gray-900">
+            Featured <span className="text-brand">Products</span>
+          </h2>
+          <Link
+            href="/products"
+            className="group flex items-center text-sm font-medium text-gray-600 hover:text-brand transition-colors"
+          >
+            View All
+            <ChevronRight className="ml-1 w-4 h-4 transition-transform group-hover:translate-x-1" />
+          </Link>
+        </div>
+
+        <ProductList products={products} />
+      </section>
     </div>
   );
-};
-
-export default HomePage;
+}

@@ -5,7 +5,7 @@ import HeaderSub from "@/components/HeaderSub";
 import Footer from "@/components/Footer";
 import { AuthProvider } from "@/utils/AuthContext";
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({ subsets: ["latin"], display: "swap" });
 
 export const metadata = {
   title: "Puterbench | PC Builder & Store",
@@ -16,11 +16,13 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body className={`${inter.className} flex flex-col min-h-screen`}>
         <AuthProvider>
-          <HeaderTop />
-          <HeaderSub />
-          {children}
+          <div className="sticky top-0 z-50 bg-white shadow-sm">
+            <HeaderTop />
+            <HeaderSub />
+          </div>
+          <main className="flex-grow">{children}</main>
           <Footer />
         </AuthProvider>
       </body>

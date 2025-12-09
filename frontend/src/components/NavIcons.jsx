@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { useAuth } from "@/utils/AuthContext";
 import { fetchCart } from "@/utils/api";
+import { ChevronDown, User } from "lucide-react";
 
 const NavIcons = () => {
   const router = useRouter();
@@ -20,6 +21,17 @@ const NavIcons = () => {
         .catch((err) => console.error(err));
     }
   }, [user, isCartOpen]);
+
+  useEffect(() => {
+    const handleProfileClickOutside = (event) => {
+      if (isProfileOpen && !event.target.closest(".profile-menu-container")) {
+        setIsProfileOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleProfileClickOutside);
+    return () =>
+      document.removeEventListener("mousedown", handleProfileClickOutside);
+  }, [isProfileOpen]);
 
   const handleProfile = () => {
     if (!user) {
@@ -42,45 +54,20 @@ const NavIcons = () => {
 
   return (
     <div className="flex min-w-max whitespace-nowrap gap-2 md:gap-4 items-center">
-      <div className="relative">
-        <div className="flex gap-2 items-center" onClick={handleProfile}>
-          <div className="relative outline outline-[1px] outline-brand rounded-md w-[25px] h-[25px] ">
-            <svg
-              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-brand cursor-pointer"
-              width="20"
-              height="20"
-              viewBox="0 0 12 13"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M5.99984 5.79995C5.21318 5.79995 4.54984 5.52995 4.00984 4.98995C3.46984 4.44995 3.19984 3.78662 3.19984 2.99995C3.19984 2.21328 3.46984 1.54995 4.00984 1.00995C4.54984 0.469951 5.21318 0.199951 5.99984 0.199951C6.78651 0.199951 7.44984 0.469951 7.98984 1.00995C8.52984 1.54995 8.79984 2.21328 8.79984 2.99995C8.79984 3.78662 8.52984 4.44995 7.98984 4.98995C7.44984 5.52995 6.78651 5.79995 5.99984 5.79995Z"
-                fill="currentColor"
-              />
-              <path
-                d="M1.08032 10.131C2.03679 8.36059 3.98849 7.39995 6.00073 7.39995V7.39995V7.39995C8.10078 7.39995 10.1778 8.4005 11.1498 10.262C11.7497 11.4108 12.0908 12.5692 12.1602 13H0C0.0719994 12.5528 0.437056 11.3216 1.08032 10.131Z"
-                fill="currentColor"
-              />
-            </svg>
+      <div className="profile-menu-container relative">
+        <div
+          className="group flex gap-2 items-center cursor-pointer"
+          onClick={handleProfile}
+        >
+          <div className="bg-[#F5F5F5] p-1 outline outline-1 outline-brand rounded-full">
+            <User className="text-brand overflow-hidden" />
           </div>
           {user && (
-            <svg
-              className={"text-secondary cursor-pointer"}
-              width="16"
-              height="16"
-              viewBox="0 0 16 16"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              onClick={handleProfile}
-            >
-              <path
-                d="M4 6L8 10L12 6"
-                stroke="currentColor"
-                strokeWidth="1.6"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
+            <ChevronDown
+              className={`group-hover:bg-[#F5F5F5] p-1 rounded-md transition-transform duration-200 ${
+                isProfileOpen ? "rotate-180" : ""
+              }`}
+            />
           )}
         </div>
         {isProfileOpen && (
@@ -160,8 +147,8 @@ const NavIcons = () => {
           />
         </svg>
         <p className="hidden md:block font-semibold select-none">Cart</p>
-        <div className="relative w-5 h-5">
-          <p className="absolute select-none -top-2 right-0 w-6 h-6 z-10 text-sm flex justify-center items-center rounded-full bg-secondary text-brand-white text-center">
+        <div className="relative">
+          <p className="absolute select-none -top-4 -right-3 w-5 h-5 z-10 text-sm flex justify-center items-center rounded-full bg-secondary text-brand-white text-center">
             {cart ? cart.items.length : 0}
           </p>
         </div>

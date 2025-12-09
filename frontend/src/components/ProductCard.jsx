@@ -3,6 +3,7 @@ import React from "react";
 import { addToCart } from "../utils/api";
 import { useAuth } from "../utils/AuthContext";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export const ProductCard = ({
   name,
@@ -49,12 +50,12 @@ export const ProductCard = ({
 
       <div className="flex flex-col">
         <div className="flex justify-between items-center">
-          <h3
+          <Link
             className="cursor-pointer text-brand line-clamp-1 font-semibold text-[1.125rem]"
-            onClick={onClick}
+            href={`/products/${productId}`}
           >
             {name}
-          </h3>
+          </Link>
         </div>
 
         <div className="flex items-center gap-2 mb-2">

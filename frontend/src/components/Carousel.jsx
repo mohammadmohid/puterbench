@@ -169,8 +169,9 @@ const InfoCarousel = ({ slides = [], interval = 5000 }) => {
                       alt={slide.title}
                       width={1700}
                       height={450}
-                      quality={100}
-                      className="w-full object-contain"
+                      quality={90}
+                      priority={index === 0}
+                      className="w-full h-auto object-contain"
                       draggable="false"
                     />
                   </div>

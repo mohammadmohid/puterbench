@@ -2,7 +2,7 @@
 
 import LoadingSpinner from "@/components/Loader";
 import { ProductCard } from "@/components/ProductCard";
-import { fetchProducts } from "@/utils/api";
+import { fetchCategories, fetchProducts } from "@/utils/api";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState, useEffect, Suspense } from "react";
 
@@ -13,6 +13,7 @@ function ProductListingContent() {
   const categoryQuery = searchParams.get("category") || "";
 
   const [products, setProducts] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const [filters, setFilters] = useState({
@@ -23,15 +24,21 @@ function ProductListingContent() {
 
   useEffect(() => {
     loadProducts();
-  }, []);
+  }, [products, categories]);
 
   const loadProducts = async () => {
     try {
-      const data = await fetchProducts();
-      setProducts(data);
+      const productsData = await fetchProducts();
+      const categoriesData = await fetchCategories();
+      const [categories, products] = await Promise.all([
+        categoriesData,
+        productsData,
+      ]);
+      setProducts(products);
+      setCategories(categories);
       setLoading(false);
     } catch (error) {
-      console.error("Error loading products:", error);
+      console.error("Error loading products and categories:", error);
       setLoading(false);
     }
   };

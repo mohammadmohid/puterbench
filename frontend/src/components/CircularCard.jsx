@@ -9,6 +9,7 @@ export const CircularCard = ({ name, imageSrc, href }) => {
           <Image
             src={imageSrc || "/placeholder-img.png"}
             alt={name}
+            className="object-contain"
             fill
             sizes="25vw"
           />

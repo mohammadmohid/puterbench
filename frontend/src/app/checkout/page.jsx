@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/utils/AuthContext";
 import { fetchCart, createOrder } from "@/utils/api";
+import LoadingSpinner from "@/components/Loader";
 
 export default function CheckoutPage() {
   const { user } = useAuth();
@@ -46,7 +47,12 @@ export default function CheckoutPage() {
     }
   };
 
-  if (!cart) return <LoadingSpinner />;
+  if (!cart)
+    return (
+      <div className="w-full min-h-[60vh] flex justify-center items-center">
+        <LoadingSpinner />
+      </div>
+    );
 
   return (
     <div className="max-w-4xl mx-auto p-8">
