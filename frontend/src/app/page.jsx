@@ -6,6 +6,7 @@ import { CircularCard } from "@/components/CircularCard";
 import { FeaturedProducts } from "@/components/FeaturedProducts";
 import { fetchCategories, fetchProducts } from "@/utils/api";
 import { useState, useEffect } from "react";
+import LoadingSpinner from "@/components/Loader";
 
 const HomePage = () => {
   const [categories, setCategories] = useState([]);
@@ -87,7 +88,7 @@ const HomePage = () => {
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 gap-4">
           {loading ? (
-            <div>Loading...</div>
+            <LoadingSpinner />
           ) : (
             categories.map((category) => (
               <CircularCard
@@ -100,11 +101,7 @@ const HomePage = () => {
           )}
         </div>
       </section>
-      {loading ? (
-        <div>Loading...</div>
-      ) : (
-        <FeaturedProducts products={products} />
-      )}
+      {loading ? <LoadingSpinner /> : <FeaturedProducts products={products} />}
     </div>
   );
 };

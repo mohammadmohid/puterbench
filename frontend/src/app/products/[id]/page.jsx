@@ -5,6 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import { addToCart, fetchProductById } from "@/utils/api";
 import { useAuth } from "@/utils/AuthContext";
 import Image from "next/image";
+import LoadingSpinner from "@/components/Loader";
 
 export default function ProductDetails() {
   const { id } = useParams();
@@ -45,7 +46,7 @@ export default function ProductDetails() {
     }
   };
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <LoadingSpinner />;
   if (!product) return <div>Product not found</div>;
 
   return (

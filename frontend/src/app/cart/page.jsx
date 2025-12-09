@@ -5,171 +5,319 @@ import Image from "next/image";
 import Link from "next/link";
 import { fetchCart, updateCartItem, removeFromCart } from "@/utils/api";
 import { useAuth } from "@/utils/AuthContext";
+import LoadingSpinner from "@/components/Loader";
+import { ChevronRight, Trash2, Minus, Plus, ShoppingBag } from "lucide-react";
 
-const CartItem = ({ item, updateQuantity, removeItem }) => (
-  <div className="flex flex-row items-start gap-4 p-4 border-b border-border-default">
-    <div className="relative w-24 h-24 bg-gray-100 rounded">
-      <Image
-        src={item.product.image || "/placeholder-img.png"}
-        alt=""
-        fill
-        sizes="25vw"
-        className="object-cover"
-      />
-    </div>
-    <div className="flex-grow">
-      <h3 className="font-medium text-lg">{item.product.name}</h3>
-      <p className="text-brand font-medium text-lg mt-2">
-        Rs. {item.product.price}
-      </p>
-    </div>
-    <div className="flex items-center gap-4 mt-2 sm:mt-0">
-      <div className="flex items-center">
-        <button
-          onClick={() => updateQuantity(item.product._id, item.quantity - 1)}
-          className="w-4 h-4 md:w-8 md:h-8 bg-[#F5F5F5] rounded-sm md:rounded-md flex items-center justify-center"
-        >
-          -
-        </button>
-        <span className="w-4 md:w-8 text-center">{item.quantity}</span>
-        <button
-          onClick={() => updateQuantity(item.product._id, item.quantity + 1)}
-          className="w-4 h-4 md:w-8 md:h-8 bg-[#F5F5F5] rounded-sm md:rounded-md flex items-center justify-center"
-        >
-          +
-        </button>
+const formatPrice = (amount) => {
+  return new Intl.NumberFormat("en-PK", {
+    style: "currency",
+    currency: "PKR",
+    maximumFractionDigits: 0,
+  }).format(amount);
+};
+
+const CartItem = ({ item, updateQuantity, removeItem, isUpdating }) => {
+  return (
+    <div
+      className={`flex flex-col sm:flex-row items-start gap-4 p-4 border-b border-border-default transition-opacity ${
+        isUpdating ? "opacity-50 pointer-events-none" : "opacity-100"
+      }`}
+    >
+      {/* Product Image */}
+      <div className="relative w-full sm:w-24 h-24 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
+        <Image
+          src={item.product.image || "/placeholder-img.png"}
+          alt={item.product.name}
+          fill
+          sizes="(max-width: 768px) 100vw, 25vw"
+          className="object-contain"
+        />
       </div>
-      <button onClick={() => removeItem(item.product._id)}>
-        <svg
-          className="text-brand"
-          width="20"
-          height="20"
-          viewBox="0 0 18 20"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d="M17.25 3.5H13.5V2.75C13.5 2.15326 13.2629 1.58097 12.841 1.15901C12.419 0.737053 11.8467 0.5 11.25 0.5H6.75C6.15326 0.5 5.58097 0.737053 5.15901 1.15901C4.73705 1.58097 4.5 2.15326 4.5 2.75V3.5H0.75C0.551088 3.5 0.360322 3.57902 0.21967 3.71967C0.0790178 3.86032 0 4.05109 0 4.25C0 4.44891 0.0790178 4.63968 0.21967 4.78033C0.360322 4.92098 0.551088 5 0.75 5H1.5V18.5C1.5 18.8978 1.65804 19.2794 1.93934 19.5607C2.22064 19.842 2.60218 20 3 20H15C15.3978 20 15.7794 19.842 16.0607 19.5607C16.342 19.2794 16.5 18.8978 16.5 18.5V5H17.25C17.4489 5 17.6397 4.92098 17.7803 4.78033C17.921 4.63968 18 4.44891 18 4.25C18 4.05109 17.921 3.86032 17.7803 3.71967C17.6397 3.57902 17.4489 3.5 17.25 3.5ZM7.5 14.75C7.5 14.9489 7.42098 15.1397 7.28033 15.2803C7.13968 15.421 6.94891 15.5 6.75 15.5C6.55109 15.5 6.36032 15.421 6.21967 15.2803C6.07902 15.1397 6 14.9489 6 14.75V8.75C6 8.55109 6.07902 8.36032 6.21967 8.21967C6.36032 8.07902 6.55109 8 6.75 8C6.94891 8 7.13968 8.07902 7.28033 8.21967C7.42098 8.36032 7.5 8.55109 7.5 8.75V14.75ZM12 14.75C12 14.9489 11.921 15.1397 11.7803 15.2803C11.6397 15.421 11.4489 15.5 11.25 15.5C11.0511 15.5 10.8603 15.421 10.7197 15.2803C10.579 15.1397 10.5 14.9489 10.5 14.75V8.75C10.5 8.55109 10.579 8.36032 10.7197 8.21967C10.8603 8.07902 11.0511 8 11.25 8C11.4489 8 11.6397 8.07902 11.7803 8.21967C11.921 8.36032 12 8.55109 12 8.75V14.75ZM12 3.5H6V2.75C6 2.55109 6.07902 2.36032 6.21967 2.21967C6.36032 2.07902 6.55109 2 6.75 2H11.25C11.4489 2 11.6397 2.07902 11.7803 2.21967C11.921 2.36032 12 2.55109 12 2.75V3.5Z"
-            fill="currentColor"
-          />
-        </svg>
-      </button>
+
+      {/* Product Details */}
+      <div className="flex-grow w-full">
+        <div className="flex justify-between items-start">
+          <div>
+            <h3 className="font-semibold text-lg text-gray-900">
+              {item.product.name}
+            </h3>
+            <p className="text-sm text-gray-500 mt-1 capitalize">
+              {item.product.category || "General"}
+            </p>
+          </div>
+          <p className="font-bold text-lg text-brand hidden sm:block">
+            {formatPrice(item.product.price * item.quantity)}
+          </p>
+        </div>
+
+        {/* Mobile Price */}
+        <div className="flex justify-between items-center mt-4">
+          <p className="font-bold text-lg text-brand sm:hidden">
+            {formatPrice(item.product.price * item.quantity)}
+          </p>
+
+          <div className="flex items-center gap-6">
+            {/* Quantity Selector */}
+            <div className="flex items-center border border-gray-200 rounded-lg">
+              <button
+                onClick={() =>
+                  updateQuantity(item.product._id, item.quantity - 1)
+                }
+                disabled={item.quantity <= 1}
+                className="w-8 h-8 flex items-center justify-center text-gray-600 hover:bg-gray-100 disabled:opacity-30 transition-colors"
+                aria-label="Decrease quantity"
+              >
+                <Minus size={16} />
+              </button>
+              <span className="w-10 text-center font-medium text-sm">
+                {item.quantity}
+              </span>
+              <button
+                onClick={() =>
+                  updateQuantity(item.product._id, item.quantity + 1)
+                }
+                className="w-8 h-8 flex items-center justify-center text-gray-600 hover:bg-gray-100 transition-colors"
+                aria-label="Increase quantity"
+              >
+                <Plus size={16} />
+              </button>
+            </div>
+
+            {/* Remove Button */}
+            <button
+              onClick={() => removeItem(item.product._id)}
+              className="text-gray-400 hover:text-red-600 transition-colors p-2 rounded-full hover:bg-red-50"
+              aria-label="Remove item"
+            >
+              <Trash2 size={20} />
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 const Cart = () => {
   const { user, loading: authLoading } = useAuth();
   const [cart, setCart] = useState(null);
-  const [cartLoading, setCartLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    if (user) {
-      loadCart();
-    } else if (!authLoading) {
-      setCartLoading(false);
-    }
-  }, [user, authLoading]);
+  const [updatingItems, setUpdatingItems] = useState(new Set());
 
   const loadCart = async () => {
+    if (!user) return;
     try {
       const data = await fetchCart(user._id, user.accessToken);
       setCart(data);
     } catch (error) {
       console.error("Error loading cart:", error);
     } finally {
-      setCartLoading(false);
+      setLoading(false);
     }
   };
 
+  useEffect(() => {
+    if (user) {
+      loadCart();
+    } else if (!authLoading) {
+      setLoading(false);
+    }
+  }, [user, authLoading]);
+
   const handleUpdateQuantity = async (productId, newQuantity) => {
-    if (newQuantity < 1) return; // Optional: separate remove call needed for 0
+    if (newQuantity < 1) return;
+
+    const previousCart = { ...cart };
+    setCart((prev) => ({
+      ...prev,
+      items: prev.items.map((item) =>
+        item.product._id === productId
+          ? { ...item, quantity: newQuantity }
+          : item
+      ),
+      totalPrice: prev.items.reduce((acc, item) => {
+        const qty =
+          item.product._id === productId ? newQuantity : item.quantity;
+        return acc + item.product.price * qty;
+      }, 0),
+    }));
+
+    setUpdatingItems((prev) => new Set(prev).add(productId));
+
     try {
       await updateCartItem(user._id, productId, newQuantity, user.accessToken);
-      loadCart();
     } catch (error) {
       console.error("Failed to update quantity", error);
+      setCart(previousCart);
+      alert("Failed to update quantity. Please try again.");
+    } finally {
+      setUpdatingItems((prev) => {
+        const next = new Set(prev);
+        next.delete(productId);
+        return next;
+      });
     }
   };
 
   const handleRemoveItem = async (productId) => {
+    const previousCart = { ...cart };
+
+    setCart((prev) => ({
+      ...prev,
+      items: prev.items.filter((item) => item.product._id !== productId),
+      totalPrice: prev.items
+        .filter((item) => item.product._id !== productId)
+        .reduce((acc, item) => acc + item.product.price * item.quantity, 0),
+    }));
+
     try {
       await removeFromCart(user._id, productId, user.accessToken);
-      loadCart();
     } catch (error) {
       console.error("Failed to remove item", error);
+      setCart(previousCart);
+      alert("Could not remove item.");
     }
   };
 
-  if (authLoading || cartLoading)
-    return <div className="p-8 text-center">Loading Cart...</div>;
-  if (!user)
+  const deliveryFee = 150;
+  const subtotal = cart?.totalPrice || 0;
+  const total = subtotal + deliveryFee;
+
+  if (authLoading || loading) {
     return (
-      <div className="p-8 text-center">
-        Please{" "}
-        <Link href="/login" className="text-brand underline">
-          login
-        </Link>{" "}
-        to view your cart.
+      <div className="w-full min-h-[60vh] flex justify-center items-center">
+        <LoadingSpinner />
       </div>
     );
-  if (!cart || !cart.items || cart.items.length === 0)
+  }
+
+  if (!user) {
     return (
-      <div className="p-8 text-center">
-        Your Cart is Empty.{" "}
-        <Link href="/products" className="text-brand underline">
-          Shop Now
+      <div className="min-h-[60vh] flex flex-col items-center justify-center p-8 text-center">
+        <ShoppingBag size={64} className="text-gray-300 mb-4" />
+        <h2 className="text-2xl font-semibold text-gray-800 mb-2">
+          Please log in
+        </h2>
+        <p className="text-gray-500 mb-6">
+          View items in your cart and checkout.
+        </p>
+        <Link
+          href="/login"
+          className="px-6 py-3 bg-brand text-white rounded-lg hover:opacity-90 transition-opacity"
+        >
+          Login to Continue
         </Link>
       </div>
     );
+  }
 
-  const discount = 0;
-  const deliveryFee = 15;
-  const total = (cart.totalPrice || 0) - discount + deliveryFee;
+  if (!cart || !cart.items || cart.items.length === 0) {
+    return (
+      <div className="min-h-[60vh] flex flex-col items-center justify-center p-8 text-center">
+        <div className="bg-gray-50 p-6 rounded-full mb-6">
+          <ShoppingBag size={48} className="text-gray-400" />
+        </div>
+        <h2 className="text-2xl font-bold text-gray-800 mb-2">
+          Your cart is empty
+        </h2>
+        <p className="text-gray-500 mb-8 max-w-md">
+          Looks like you haven't added anything to your cart yet. Go ahead and
+          explore our top categories.
+        </p>
+        <Link
+          href="/products"
+          className="inline-flex items-center gap-2 px-8 py-3 bg-brand text-white rounded-lg hover:bg-opacity-90 transition-all shadow-lg shadow-brand/20"
+        >
+          Start Shopping <ChevronRight size={18} />
+        </Link>
+      </div>
+    );
+  }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8">
-      <div className="text-sm text-gray-500 mb-6">
-        <Link href="/">Home</Link> <span className="mx-2">›</span>{" "}
-        <span>Cart</span>
-      </div>
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      {/* Breadcrumb */}
+      <nav className="flex text-sm text-gray-500 mb-8">
+        <Link href="/" className="hover:text-brand transition-colors">
+          Home
+        </Link>
+        <span className="mx-2">/</span>
+        <span className="font-medium text-gray-900">Cart</span>
+      </nav>
 
-      <h1 className="text-2xl font-bold mb-8">Your Cart</h1>
+      <h1 className="text-3xl font-bold text-gray-900 mb-8">
+        Shopping Cart ({cart.items.length})
+      </h1>
 
-      <div className="flex flex-col lg:flex-row gap-4">
-        <div className="flex-grow border rounded-sm border-b-0 border-border-default">
-          {cart.items.map((item) => (
-            <CartItem
-              key={item.product._id}
-              item={item}
-              updateQuantity={handleUpdateQuantity}
-              removeItem={handleRemoveItem}
-            />
-          ))}
+      <div className="flex flex-col lg:flex-row gap-12">
+        {/* Cart Items List */}
+        <div className="flex-grow">
+          <div className="bg-white rounded-xl shadow-sm border border-border-default overflow-hidden">
+            {cart.items.map((item) => (
+              <CartItem
+                key={item.product._id}
+                item={item}
+                isUpdating={updatingItems.has(item.product._id)}
+                updateQuantity={handleUpdateQuantity}
+                removeItem={handleRemoveItem}
+              />
+            ))}
+          </div>
         </div>
 
-        <div className="lg:w-96 p-6 h-fit border rounded-xl border-border-default">
-          <h2 className="text-xl font-semibold mb-6">Order Summary</h2>
-          <div className="space-y-4">
-            <div className="flex justify-between">
-              <span>Subtotal</span>
-              <span>Rs. {cart.totalPrice}</span>
+        {/* Order Summary Sidebar */}
+        <div className="lg:w-96 flex-shrink-0">
+          <div className="bg-white p-6 rounded-xl border border-border-default shadow-sm lg:sticky lg:top-24">
+            <h2 className="text-xl font-bold text-gray-900 mb-6">
+              Order Summary
+            </h2>
+
+            <div className="space-y-4 text-gray-600">
+              <div className="flex justify-between">
+                <span>Subtotal</span>
+                <span className="font-medium text-gray-900">
+                  {formatPrice(subtotal)}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span>Delivery Fee</span>
+                <span className="font-medium text-gray-900">
+                  {formatPrice(deliveryFee)}
+                </span>
+              </div>
             </div>
-            <div className="flex justify-between">
-              <span>Delivery Fee</span>
-              <span>Rs. {deliveryFee}</span>
+
+            <div className="border-t border-gray-100 my-6"></div>
+
+            <div className="flex justify-between items-center mb-8">
+              <span className="text-lg font-bold text-gray-900">Total</span>
+              <div className="text-right">
+                <span className="text-2xl font-bold text-brand block">
+                  {formatPrice(total)}
+                </span>
+                <span className="text-xs text-gray-500 font-normal">
+                  Inclusive of all taxes
+                </span>
+              </div>
             </div>
-            <div className="flex justify-between font-semibold text-lg pt-4 border-t border-border-default">
-              <span>Total</span>
-              <span>Rs. {total}</span>
+
+            <Link
+              href="/checkout"
+              className="w-full flex items-center justify-center gap-2 py-4 px-6 bg-brand hover:bg-secondary text-white font-semibold rounded-lg shadow-lg shadow-brand/20 transition-all transform active:scale-[0.98]"
+            >
+              Proceed to Checkout
+            </Link>
+
+            <div className="mt-6 text-center">
+              <Link
+                href="/products"
+                className="text-sm text-gray-500 hover:text-brand transition-colors underline"
+              >
+                Continue Shopping
+              </Link>
             </div>
           </div>
-          <Link
-            href="/checkout"
-            className="w-full mt-6 px-6 py-3 bg-brand hover:bg-secondary text-brand-white font-semibold rounded-lg flex items-center justify-center gap-2"
-          >
-            <span>Checkout</span>
-          </Link>
         </div>
       </div>
     </div>

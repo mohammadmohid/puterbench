@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/utils/AuthContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
+import LoadingSpinner from "@/components/Loader";
 
 export default function NewProductPage() {
   const router = useRouter();
@@ -37,7 +38,7 @@ export default function NewProductPage() {
     }
   };
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <LoadingSpinner />;
 
   return (
     <ProtectedRoute adminOnly={true}>

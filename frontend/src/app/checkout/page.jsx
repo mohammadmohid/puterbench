@@ -46,7 +46,7 @@ export default function CheckoutPage() {
     }
   };
 
-  if (!cart) return <div>Loading...</div>;
+  if (!cart) return <LoadingSpinner />;
 
   return (
     <div className="max-w-4xl mx-auto p-8">

@@ -1,6 +1,7 @@
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { useAuth } from "@/utils/AuthContext";
+import LoadingSpinner from "./Loader";
 
 const ProtectedRoute = ({ children, adminOnly = false }) => {
   const router = useRouter();
@@ -16,7 +17,7 @@ const ProtectedRoute = ({ children, adminOnly = false }) => {
     }
   }, [user, loading, router, adminOnly]);
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <LoadingSpinner />;
   if (!user) return null;
   if (adminOnly && !user.isAdmin) return null;
 

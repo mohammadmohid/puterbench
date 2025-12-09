@@ -34,13 +34,13 @@ export const ProductCard = ({
 
   return (
     <div
-      className={`flex flex-col gap-4 px-6 py-4 border border-border-default rounded-lg ${className}`}
+      className={`flex flex-col gap-4 px-6 py-4 border border-border-default rounded-lg ${className} hover:shadow-md`}
     >
       <div className="relative aspect-square">
         <Image
           src={imageSrc || "/placeholder-img.png"}
           alt={name}
-          className="object-contain"
+          className="object-contain cursor-pointer"
           sizes="25vw"
           fill
           onClick={onClick}
@@ -50,14 +50,14 @@ export const ProductCard = ({
       <div className="flex flex-col">
         <div className="flex justify-between items-center">
           <h3
-            className="text-brand line-clamp-1 font-semibold text-[1.125rem]"
+            className="cursor-pointer text-brand line-clamp-1 font-semibold text-[1.125rem]"
             onClick={onClick}
           >
             {name}
           </h3>
         </div>
 
-        <div className="flex items-center gap-2 mb-2" onClick={onClick}>
+        <div className="flex items-center gap-2 mb-2">
           <span className="text-text-default font-semibold">
             Rs. {price.toLocaleString()}
           </span>
@@ -68,10 +68,7 @@ export const ProductCard = ({
           )}
         </div>
 
-        <p
-          className="text-text-secondary line-clamp-1 text-ellipsis text-sm mb-2"
-          onClick={onClick}
-        >
+        <p className="text-text-secondary line-clamp-1 text-ellipsis text-sm mb-2">
           {description}
         </p>
         <div className="flex md:flex-wrap gap-2">

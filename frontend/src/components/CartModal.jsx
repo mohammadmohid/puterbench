@@ -28,9 +28,9 @@ const CartModal = ({ cart }) => {
                 <Image
                   src={item.product.image || "/placeholder-img.png"}
                   alt={item.product.name}
-                  width={72}
-                  height={96}
-                  className="bg-gray-100 object-cover rounded-md w-16 h-16"
+                  width={64}
+                  height={64}
+                  className="bg-gray-100 object-contain rounded-md w-16 h-16"
                 />
                 <div className="flex flex-col justify-between w-full">
                   {/* TOP */}

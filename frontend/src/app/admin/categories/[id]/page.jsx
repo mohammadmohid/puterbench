@@ -7,6 +7,7 @@ import Link from "next/link";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { useAuth } from "@/utils/AuthContext";
 import CategoryForm from "@/components/categories/CategoryForm";
+import LoadingSpinner from "@/components/Loader";
 
 export default function EditCategoryPage() {
   const router = useRouter();
@@ -53,7 +54,7 @@ export default function EditCategoryPage() {
     }
   };
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <LoadingSpinner />;
   if (!category) return <div>Category not found</div>;
 
   return (

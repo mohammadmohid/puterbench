@@ -6,6 +6,7 @@ import Link from "next/link";
 import Image from "next/image";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { useAuth } from "@/utils/AuthContext";
+import LoadingSpinner from "@/components/Loader";
 
 export default function CategoryPage() {
   const [categories, setCategories] = useState([]);
@@ -38,7 +39,7 @@ export default function CategoryPage() {
     }
   };
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <LoadingSpinner />;
 
   return (
     <ProtectedRoute adminOnly={true}>

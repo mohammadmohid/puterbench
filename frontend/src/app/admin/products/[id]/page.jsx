@@ -11,6 +11,7 @@ import {
 import Image from "next/image";
 import { useAuth } from "@/utils/AuthContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
+import LoadingSpinner from "@/components/Loader";
 
 export default function EditProductPage() {
   const router = useRouter();
@@ -62,7 +63,7 @@ export default function EditProductPage() {
     }
   };
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <LoadingSpinner />;
   if (!product) return <div>Product not found</div>;
 
   return (

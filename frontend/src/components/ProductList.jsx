@@ -10,7 +10,6 @@ export const ProductList = ({ products }) => {
         (product, index) =>
           product.isFeatured && (
             <ProductCard
-              className="cursor-pointer"
               key={index}
               name={product.name}
               price={product.price}

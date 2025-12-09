@@ -1,11 +1,12 @@
 "use client";
 
+import LoadingSpinner from "@/components/Loader";
 import { ProductCard } from "@/components/ProductCard";
 import { fetchProducts } from "@/utils/api";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, Suspense } from "react";
 
-export default function ProductListing() {
+function ProductListingContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const searchQuery = searchParams.get("search") || "";
@@ -14,10 +15,9 @@ export default function ProductListing() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Filter States
   const [filters, setFilters] = useState({
     brandName: "",
-    priceRange: [0, 1000000], // Increased max for better range
+    priceRange: [0, 1000000],
   });
   const [selectedFilters, setSelectedFilters] = useState([]);
 
@@ -56,38 +56,32 @@ export default function ProductListing() {
   };
 
   // Filter Logic
-  const filteredProducts = useMemo(() => {
-    return products.filter((product) => {
-      // 1. Search Filter
-      if (
-        searchQuery &&
-        !product.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
-        !product.description?.toLowerCase().includes(searchQuery.toLowerCase())
-      ) {
-        return false;
-      }
+  const filteredProducts = products.filter((product) => {
+    if (
+      searchQuery &&
+      !product.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
+      !product.description?.toLowerCase().includes(searchQuery.toLowerCase())
+    ) {
+      return false;
+    }
 
-      // 2. Category Filter (from URL)
-      if (categoryQuery && product.category !== categoryQuery) {
-        return false;
-      }
+    if (categoryQuery && product.category !== categoryQuery) {
+      return false;
+    }
 
-      // 3. Brand Filter
-      if (
-        filters.brandName &&
-        !product.brand?.toLowerCase().includes(filters.brandName.toLowerCase())
-      ) {
-        return false;
-      }
+    if (
+      filters.brandName &&
+      !product.brand?.toLowerCase().includes(filters.brandName.toLowerCase())
+    ) {
+      return false;
+    }
 
-      // 4. Price Filter
-      if (product.price > filters.priceRange[1]) {
-        return false;
-      }
+    if (product.price > filters.priceRange[1]) {
+      return false;
+    }
 
-      return true;
-    });
-  }, [products, searchQuery, categoryQuery, filters]);
+    return true;
+  });
 
   return (
     <div className="flex flex-col md:flex-row gap-8 p-4 md:p-8">
@@ -181,7 +175,7 @@ export default function ProductListing() {
         </div>
 
         {loading ? (
-          <div>Loading...</div>
+          <LoadingSpinner />
         ) : filteredProducts.length === 0 ? (
           <div className="text-center py-10 text-gray-500">
             No products found matching your criteria.
@@ -202,5 +196,13 @@ export default function ProductListing() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function ProductListing() {
+  return (
+    <Suspense fallback={<LoadingSpinner />}>
+      <ProductListingContent />
+    </Suspense>
   );
 }
