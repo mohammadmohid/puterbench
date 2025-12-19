@@ -27,7 +27,7 @@
 
 ---
 
-## ⚙️ Running Locally
+## Running Locally
 
 Follow these steps to run the project locally.
 
