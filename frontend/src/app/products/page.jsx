@@ -193,9 +193,11 @@ function ProductListingContent() {
               <ProductCard
                 key={product._id}
                 name={product.name}
-                description={product.description}
                 price={product.price}
+                discountPercent={product.discountPercent}
+                description={product.description}
                 imageSrc={product.image}
+                productId={product._id}
                 onClick={() => router.push(`products/${product._id}`)}
               />
             ))}
