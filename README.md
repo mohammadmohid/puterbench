@@ -104,7 +104,7 @@ Visit `http://localhost:3000` to view the application.
 
 ---
 
-## 📡 API Documentation
+## API Documentation
 
 The backend exposes a RESTful API. Below are the key endpoints accessible at `http://localhost:5000/`.
 
@@ -145,7 +145,7 @@ The backend exposes a RESTful API. Below are the key endpoints accessible at `ht
 
 ---
 
-## 📂 Project Structure
+## Project Structure
 
 ```
 puterbench/
